@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "van-tab": "/wxcomponents/vant/dist/tab/index",
+    "van-tabs": "/wxcomponents/vant/dist/tabs/index",
+    "van-switch": "/wxcomponents/vant/dist/switch/index",
+    "van-popup": "/wxcomponents/vant/dist/popup/index"
+  }
+}

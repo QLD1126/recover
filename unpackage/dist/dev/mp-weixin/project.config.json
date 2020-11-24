@@ -1,0 +1,35 @@
+{
+  "description": "项目配置文件。",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "",
+  "appid": "touristappid",
+  "projectname": "recover",
+  "condition": {
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/me/add_money/add_money",
+          "pathName": "pages/me/add_money/add_money",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

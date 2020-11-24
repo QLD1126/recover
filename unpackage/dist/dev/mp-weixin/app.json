@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/me/me",
+    "pages/me/reansa_list/reansa_list",
+    "pages/me/add_money/add_money",
+    "pages/me/recive_order/recive_order",
+    "pages/me/get_money/get_money"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#000",
+    "selectedColor": "#2E8EF4",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/static/index.png",
+        "selectedIconPath": "/static/index_1.png"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的",
+        "iconPath": "/static/me.png",
+        "selectedIconPath": "/static/me_s.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}
