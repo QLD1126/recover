@@ -7,7 +7,7 @@
 					余额（元）
 				</view>
 				<view class="">
-					￥5.00
+					￥{{info.integral}}
 				</view>
 			</view>
 		</view>
@@ -40,11 +40,15 @@
 </template>
 
 <script>
+	import api from '../../../common/api/api.js'
 	export default {
 		data() {
 			return {
-
+info:uni.getStorageSync('USERINFO')
 			};
+		},
+		onShow() {
+			
 		}
 	}
 </script>
@@ -83,13 +87,14 @@
 			position: relative;
 			width: 702rpx;
 			height: 286rpx;
-			margin-bottom: 60rpx;
+			// margin-bottom: 60rpx;
+			margin: 20rpx auto 60rpx;
 			>image {
 				position: absolute;
 				top: 0;
 				width: 100%;
 				height: 100%;
-				z-index: -1;
+				// z-index: -1;
 			}
 
 			>view {

@@ -5,34 +5,34 @@
 			<view class="top">
 				<view class="flex_between">
 					<view class="">
-						<image src="../../static/logo.png" mode=""></image>
-						<text>青铜</text>
+						<image :src="userInfo.avatar" mode=""></image>
+						<text>{{userInfo.nickname}}</text>
 					</view>
 					<view class="">
-						<text>15656565656</text>
-						<text class="iconfont icon-fanhuizuojiantouxiangzuoshangyibuxianxing"></text>
+						<text>{{userInfo.phone}}</text>
+						<!-- <text class="iconfont icon-fanhuizuojiantouxiangzuoshangyibuxianxing"></text> -->
 					</view>
 				</view>
 				<!-- 我的环保币 -->
 				<view class="box_702 flex_between">
-					<view class="">
-						<text>我的环保币:500</text>
+					<view class="" @click="toPage('rechange')">
+						<text>我的环保币:{{userInfo.integral}}</text>
 						<view class="">
 							充值
 						</view>
 					</view>
-					<view>
-						<text>环保币记录</text>
-						<view class="">
+					<view >
+						<text @click="toPage('list')">环保币记录</text>
+						<view class="" @click="toPage('getmoney')">
 							提现
 						</view>
 					</view>
 				</view>
 			</view>
 			<!-- 主体 -->
-			<view class="main">				
+			<view class="main">
 				<view class="ul_list">
-					<view class="" v-for="(item,index) in ulArr" :key='index'>
+					<view class="" v-for="(item,index) in ulArr" :key='index' @click="toPage('page',item.url)">
 						<view class="">
 							<!-- <image src="" mode=""></image> -->
 							<image class="icon_44" :src="item.img" mode=""></image>
@@ -47,24 +47,59 @@
 </template>
 
 <script>
+	import api from '../../common/api/api.js'
 	export default {
 		data() {
 			return {
 				ulArr: [{
 					img: '../../static/jdjl.png',
 					title: '我的接单记录',
-					url: 'aaa'
-				}]
+					url: './recive_order/recive_order'
+				}],
+				userInfo: uni.getStorageSync('USERINFO'),
 			};
+		},
+		onShow() {
+			// this.userInfo=
+		},
+		methods: {
+			toPage(type, url) {
+				console.log(url)
+				switch (type) {
+					//动态的路径要加./,
+					case 'rechange':
+						uni.navigateTo({
+							url: 'rechange/rechange',
+						})
+						break;
+					case 'getmoney':
+						uni.navigateTo({
+							url: 'get_money/get_money'
+						})
+						break;
+					case 'page':
+						uni.navigateTo({
+							url: url,
+						})
+						break;
+					case 'list':
+					// 交易记录
+					uni.navigateTo({
+						url:'reansa_list/reansa_list',
+					})
+					break;
+				}
+			},
 		}
 	}
 </script>
 
 <style lang="scss">
-	.container{
-		background: rgba(0,0,0,0);
+	.container {
+		background: rgba(0, 0, 0, 0);
 	}
-.bg {
+
+	.bg {
 		width: 900rpx;
 		height: 427rpx;
 		position: absolute;
@@ -78,10 +113,12 @@
 		height: 300rpx;
 		padding: 20rpx;
 		position: relative;
+
 		.flex_between:first-child {
 			margin-top: 62rpx;
 			color: #fff;
 			font-size: 28rpx;
+
 			image {
 				width: 88rpx;
 				height: 88rpx;
@@ -92,24 +129,26 @@
 					top: -38rpx;
 				}
 			}
+
 			>view {
 				height: 88rpx;
 				line-height: 88rpx;
+
 			}
 		}
 
 		.box_702 {
-			    padding: 40rpx;
-			    background: #fff;
-			    font-size: 28rpx;
-			    border-radius: 10rpx;
-			    /* align-items: center; */
-			    margin-top: 130rpx;
-			    position: absolute;
-			    width: 630rpx;
-			    bottom: -90rpx;
-				box-shadow: -1rpx 10rpx 10rpx #f3f3f3;
-			
+			padding: 40rpx;
+			background: #fff;
+			font-size: 28rpx;
+			border-radius: 10rpx;
+			/* align-items: center; */
+			margin-top: 130rpx;
+			position: absolute;
+			width: 630rpx;
+			bottom: -90rpx;
+			box-shadow: -1rpx 10rpx 10rpx #f3f3f3;
+
 			>view {
 				>text {
 					display: block;
@@ -121,9 +160,11 @@
 					text-align: center;
 					width: 136rpx;
 					height: 36rpx;
+					line-height: 36rpx;
 					background: #fba914;
 					border-radius: 18px;
 					color: #fff;
+					margin: 0 auto;
 				}
 			}
 		}
@@ -133,6 +174,7 @@
 		>view {
 			background-color: #fff;
 		}
+
 		>.ul_list {
 			>view {
 				width: 710rpx;
@@ -142,6 +184,7 @@
 				align-items: center;
 				padding: 0 20rpx;
 				margin-top: 100rpx;
+
 				>view {
 					>image {
 						width: 44rpx;
@@ -150,7 +193,8 @@
 						position: relative;
 						top: 10rpx;
 					}
-					+text{
+
+					+text {
 						font-size: 26rpx;
 					}
 				}
@@ -158,5 +202,4 @@
 			}
 		}
 	}
-
 </style>

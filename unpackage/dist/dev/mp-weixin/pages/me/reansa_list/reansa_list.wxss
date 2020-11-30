@@ -45,4 +45,9 @@
   font-weight: bold;
   color: #2E8EF4;
 }
+.flex_between .red {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: red;
+}
 

@@ -4,7 +4,7 @@ import request from './request.js'
 export default {
 	LOGIN(data){
 		return request({
-			url:'/api/wechat/mp_auth',
+			url:'/api/recycle/mp_auth',
 			method:'post',
 			data
 		})
@@ -15,10 +15,32 @@ export default {
 			method:'get'
 		})
 	},
+	USERINFO(){
+		return request({
+			url:'/api/recycle/info',
+			method:'get'
+		})
+	},
+	// 账单
+	BILL(params){
+		return request({
+			url:'/api/recycle/bill',
+			method:'get',
+			params
+		})
+	},
+	// 充值
+	RECHANGE(data){
+		return request({
+			url:'/api/recycle/recharge',
+			method:'post',
+			data
+		})
+	},
 	EDIT_INFO(data){
 		return request({
 			url:'/api/recycle/submit',
-			method:'get',
+			method:'post',
 			data
 		})
 	},
@@ -32,24 +54,33 @@ export default {
 	RECYLE_LIST(params){
 		return request({
 			url:'/api/recycle/orderList',
-			method:'get'
+			method:'get',
+			params
 		})
 	},
-	RECYLE_SURE(id){
+	RECYCLE_SURE(id){
 		return request({
 			url:'/api/recycle/accept/'+id,
 			method:'get'
 		})
 	},
-	RECYLE_COMPLATE(id){
+	RECYCLE_COMPLATE(id,data){
 		return request({
 			url:'/api/recycle/complete/'+id,
-			method:'get'
+			method:'post',
+			data
 		})
 	},
 	RECYCLE_REMOVE(id){
 		return request({
 			url:'/api/recycle/del/'+id,
+			method:'get'
+		})
+	},
+	// 城市列表
+	CITY_TREE(){
+		return request({
+			url:'/api/cities',
 			method:'get'
 		})
 	}

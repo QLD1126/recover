@@ -1,10 +1,9 @@
 {
-  "navigationBarTitleText": "",
-  "navigationStyle": "custom",
+  "navigationBarTitleText": "回收员端",
+  "navigationStyle": "default",
   "usingComponents": {
-    "van-tab": "/wxcomponents/vant/dist/tab/index",
-    "van-tabs": "/wxcomponents/vant/dist/tabs/index",
     "van-switch": "/wxcomponents/vant/dist/switch/index",
-    "van-popup": "/wxcomponents/vant/dist/popup/index"
+    "van-popup": "/wxcomponents/vant/dist/popup/index",
+    "van-action-sheet": "/wxcomponents/vant/dist/action-sheet/index"
   }
 }

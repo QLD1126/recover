@@ -5,13 +5,14 @@
     "pages/me/reansa_list/reansa_list",
     "pages/me/add_money/add_money",
     "pages/me/recive_order/recive_order",
-    "pages/me/get_money/get_money"
+    "pages/me/get_money/get_money",
+    "pages/me/rechange/rechange"
   ],
   "subPackages": [],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "回收员端11",
+    "navigationBarBackgroundColor": "#2E8EF4",
     "backgroundColor": "#F8F8F8"
   },
   "tabBar": {
@@ -31,6 +32,11 @@
         "selectedIconPath": "/static/me_s.png"
       }
     ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "获取您的个人以及位置信息"
+    }
   },
   "usingComponents": {}
 }

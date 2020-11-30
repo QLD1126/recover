@@ -5,11 +5,12 @@
   },
   "setting": {
     "urlCheck": false,
-    "es6": true
+    "es6": true,
+    "postcss": true
   },
   "compileType": "miniprogram",
   "libVersion": "",
-  "appid": "touristappid",
+  "appid": "wxef32ea7c13f5318c",
   "projectname": "recover",
   "condition": {
     "plugin": {
@@ -24,8 +25,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/me/add_money/add_money",
-          "pathName": "pages/me/add_money/add_money",
+          "name": "pages/me/get_money/get_money",
+          "pathName": "pages/me/get_money/get_money",
           "query": "",
           "scene": null
         }

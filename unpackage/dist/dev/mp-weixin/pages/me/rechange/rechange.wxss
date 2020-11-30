@@ -26,6 +26,7 @@
 /* 文章场景相关 */
 .container {
   height: 100vh;
+  padding-top: 20rpx;
 }
 .container > view {
   margin-bottom: 20rpx;
@@ -43,6 +44,7 @@
   border: none;
 }
 .container .btn {
+  margin: 0 auto;
   width: 464rpx;
   margin-top: 101rpx;
   -webkit-border-radius: 44rpx;

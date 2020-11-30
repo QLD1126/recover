@@ -1,7 +1,7 @@
 function req(obj) {
 	return new Promise((resolve, reject) => {
-		// const HOST = 'http://192.168.3.48:83'
-		const HOST = 'http://wangye.lncswlgs.com'
+		const HOST = 'http://192.168.3.48:8082'
+		// const HOST = 'http://wangye.lncswlgs.com'
 		var method = obj.method || "GET";
 		var url = HOST + obj.url || "";
 		var data = obj.data || {};
@@ -9,7 +9,7 @@ function req(obj) {
 		var token = uni.getStorageSync('TOKEN');
 		var header = obj.header || {
 			'Content-Type': obj.contentType || 'application/json',
-			'Authori-zation': 'Bearer '+token
+			'Authori-zation': 'Bearer ' + token
 		};
 		// console.log(header,'aaaaaa')
 		var success = obj.success; // 成功回调函数
@@ -35,7 +35,14 @@ function req(obj) {
 					// 	url:'/pages/index/index'
 					// })
 				} else if (res.statusCode === 200) {
-					switch (res.data.code) {
+					switch (res.data.status) {
+						case 400:
+							uni.showToast({
+								title: res.data.msg,
+								icon: 'none'
+							})
+							reject(res.data)
+							break;
 						case 401:
 							uni.reLaunch({
 								url: '/pages/index/index'

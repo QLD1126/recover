@@ -60,6 +60,7 @@
 <style lang="scss">
 .container{
 	height: 100vh;
+	padding-top: 20rpx;
 	>view{
 		margin-bottom: 20rpx;
 	}
@@ -77,7 +78,7 @@
 		border: none;
 	}
 	.btn{
-		// margin: ;
+		margin: 0 auto;
 		width: 464rpx;
 		margin-top: 101rpx;
 		border-radius:44rpx ;
