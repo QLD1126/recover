@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import App from './App'
+import api from 'common/api/api.js'
+Vue.prototype.$apis=api
 
 Vue.config.productionTip = false
 

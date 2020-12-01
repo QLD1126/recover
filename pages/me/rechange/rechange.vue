@@ -23,7 +23,6 @@
 </template>
 
 <script>
-	import api from '../../../common/api/api.js'
 	export default {
 		data() {
 			return {
@@ -32,7 +31,7 @@
 		},
 		methods:{
 			sure(amount){
-				api.RECHANGE({amount:amount}).then(res=>{
+				this.$apis.RECHANGE({amount:amount}).then(res=>{
 					wx.requestPayment({
 						appId: res.appId,
 						timeStamp: res.timestamp,

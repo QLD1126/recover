@@ -24,45 +24,17 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.container {
-  padding-top: 0;
-  height: 100%;
+.model_jiedan {
+  margin-top: 0;
 }
-.container > .top {
-  background-color: #2E8EF4;
-  width: 96vw;
-  padding: 2vw;
-  color: #fff;
+.model_jiedan .flex_between + view {
+  padding: 0;
+  border-bottom: none;
 }
-.container > .top .flex_between {
-  margin-bottom: 25rpx;
+.model_jiedan .flex_between + view > view {
+  margin-top: 40rpx;
 }
-.container > .top .flex_between image {
-  width: 44rpx;
-  height: 44rpx;
-  position: relative;
-  top: 10rpx;
-}
-.container > .top > .tabbar {
-  width: 100%;
-  background: #2E8EF4;
-  position: relative;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-}
-.container > .top > .tabbar .white {
-  background: #fff;
-}
-.container > .top + image {
-  margin: 261rpx auto;
-  width: 547rpx;
-  height: 342rpx;
-  display: block;
-}
-.switch {
-  position: relative;
-  top: 11rpx;
-  margin-right: 20rpx;
+.model_jiedan > view:last-child {
+  border-top: 1rpx solid #f3f3f3;
 }
 

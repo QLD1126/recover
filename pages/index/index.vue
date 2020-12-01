@@ -21,7 +21,7 @@
 				</view>
 			</view>
 		</view>
-		<image src="../../static/zwdd.png" mode="" v-if="1==2"></image>
+		<image src="../../static/zwdd.png" mode="" v-if="hasOrder"></image>
 		<view v-else>
 			<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 				<view class="flex_between">
@@ -46,13 +46,13 @@
 						<text>
 							{{item.user_location}}
 						</text>
-						<image src="../../static/dizhi_s.png" mode="" class="icon_44" v-if="params.status==1"></image>
+						<image @click="toPage('map',item)" src="../../static/dizhi_s.png" mode="" class="icon_44" v-if="params.status==1"></image>
 					</view>
 					<view class="" v-if="params.status!==0">
 						详细地址：{{item.user_address}}
 					</view>
 					<view class="" v-if="params.status==0">
-						距离：{{item.juli}}m
+						距离：{{item.distance}}m
 					</view>
 				</view>
 				<view class="">
@@ -107,7 +107,13 @@
 				</view>
 				<view class="prop_content">
 					<view class="" style="margin-top: 150rpx;">
-						<text class="putongtext hsz">请输入回收值：</text><input type="number" v-model="formdata.integral" />
+						<view class="hasinput">
+
+							<text class="putongtext hsz">请输入回收值：</text><input type="number" v-model="formdata.integral" />
+						</view>
+						<view class="hasinput" style="margin-top: 60rpx;">
+							<text class="putongtext hsz">请输入回收重量(kg)：</text><input type="number" v-model="formdata.weight" />
+						</view>
 					</view>
 				</view>
 				<view class="prop_bottom">
@@ -128,8 +134,19 @@
 	export default {
 		data() {
 			return {
+				// 弹出层
+				loginshow: false,
+				show: false,
+				prop: 'zz',
+				actions: [{
+					name: '获取用户信息',
+					color: '#07c160',
+					openType: 'getUserInfo'
+				}],
+				// 列表
 				formdata: {
-					integral: 0
+					integral: '',
+					weight: '',
 				},
 				params: {
 					page: 1,
@@ -137,16 +154,12 @@
 					status: 0,
 				},
 				hasMore: true,
-				loginData: uni.getStorageSync('LOGIN_DATA'),
+				// 页面
+
+				loginData: uni.getStorageSync('LOGIN_DATA') || {},
+				userInfo: uni.getStorageSync('USERINFO') || {},
 				datalist: [],
 				city: '',
-				userInfo: uni.getStorageSync('USERINFO') || {},
-				loginshow: false,
-				actions: [{
-					name: '获取用户信息',
-					color: '#07c160',
-					openType: 'getUserInfo'
-				}],
 				titleArr: [{
 						title: '新订单',
 						type: 0
@@ -164,29 +177,86 @@
 						type: -1
 					}
 				],
-				show: false,
-				prop: 'zz',
-				// indexData: {},
-				loginData: uni.getStorageSync('LOGIN_DATA') || {},
+
 			}
 		},
 		onLoad() {
+			// this.changeLogin()
 			this.goLogin(this.loginData)
 			this.getList(this.params)
 		},
+		computed: {
+			hasOrder() {
+				if (this.userInfo.on_line && this.datalist.length > 0) {
+					return false
+
+				} else {
+					return true
+				}
+			}
+		},
 		methods: {
-			toPage(type) {
+			//事件触发，调用接口
+			formSubmit(obj) {
+				let _this = this
+				let start = {
+					latitude: _this.userInfo.latitude,
+					longitude: _this.userInfo.longitude
+				}
+				//调用距离计算接口
+				obj.forEach(item => {
+					let end = [{
+						latitude: item.user_latitude,
+						longitude: item.user_longitude
+					}]
+					qqmapsdk.calculateDistance({
+						from: start || '', //若起点有数据则采用起点坐标，若为空默认当前地址
+						to: end, //终点坐标
+						success: function(res) { //成功后的回调
+							// let distance = res.result.elements[0].distance;
+							item.distance = res.result.elements[0].distance;
+						},
+						fail: function(error) {
+							// console.error(error);
+							// resolve('错');
+						}
+					});
+				})
+			},
+			toPage(type, obj) {
 				switch (type) {
 					case 'rechange':
 						uni.navigateTo({
 							url: '../me/rechange/rechange'
 						})
-						break
+						break;
+					case 'map':
+						let plugin = requirePlugin('routePlan');
+						let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
+
+						//使用在腾讯位置服务申请的key
+						let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
+						let endPoint = JSON.stringify({ //终点
+							'name': obj.user_address,
+							'latitude': obj.user_latitude,
+							'longitude': obj.user_longitude
+						});
+						uni.navigateTo({
+							url: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint + '&navigation=1'
+						})
+						break;
 				}
 			},
 			deleteOrder(id) {
-				api.RECYCLE_REMOVE(id).then(() => {
-					this.getList(this.params)
+				uni.showModal({
+					content: '确定删除该订单吗?',
+					success: (res) => {
+						if (res.confirm) {
+							api.RECYCLE_REMOVE(id).then(() => {
+								this.getList(this.params)
+							})
+						}
+					}
 				})
 			},
 			sure(id) {
@@ -200,12 +270,12 @@
 				this.prop = '回收'
 				Object.assign(this.formdata, {
 					id: obj.order_id,
-					weight: obj.weight
 				})
 			},
 			complate(data) {
 				api.RECYCLE_COMPLATE(data.id, data).then(res => {
 					this.show = false
+					this.params.status=2
 					this.getList(this.params)
 				}).catch(err => {
 					console.log(err, 'err')
@@ -219,7 +289,6 @@
 					content: this.userInfo.on_line ? '关闭后系统将不会为你派发订单' : '开启后系统将为您派发订单',
 					success: () => {
 						this.userInfo.on_line = !this.userInfo.on_line
-						// console.log(this.userInfo.on_line,111)
 						api.RECYCLE_LINE(this.userInfo.on_line ? 1 : 0).then(() => {
 							this.getuserinfo()
 						})
@@ -227,32 +296,35 @@
 				})
 			},
 			getList(params) {
-				uni.showLoading({
+					uni.showLoading({
 
-				})
-				// if()
-				this.datalist = []
-				this.hasMore = true
-				Object.assign(params, {
-					page: 1,
-					limit: 10
-				})
-				api.RECYLE_LIST(params).then(res => {
-					if (res.length < params.limit) {
-						this.hasMore = false
-					}
-					res.forEach(item => {
-						item.juli = 100
 					})
-					this.datalist = res
-					uni.hideLoading()
-				})
+					// if()
+					this.datalist = []
+					this.hasMore = true
+					Object.assign(params, {
+						page: 1,
+					})
+					api.RECYLE_LIST(params).then(res => {
+						if (res.length < params.limit) {
+							this.hasMore = false
+						}
+						if (params.status == 0) {
+							this.formSubmit(res)
+						}
+						//防止还没计算出结果就一把值赋给datalist
+						setTimeout(() => {
+							this.datalist = res
+							uni.hideLoading()
+							console.log(res, this.datalist, 222)
+						}, 500)
+						// this.datalist = res
+					})
 			},
 			navbarTap(type) {
 				Object.assign(this.params, {
 					status: type,
 					page: 1,
-					limit: 10
 				})
 				this.getList(this.params)
 			},
@@ -264,14 +336,21 @@
 					if (res.length < params.limit) {
 						this.hasMore = false
 					}
-					this.datalist = this.datalist.concat(res)
-					// console.log('我触底了',)
-					uni.hideLoading()
+					if (params.status == 0) {
+						this.formSubmit(res)
+					}
+					//防止还没计算出结果就一把值赋给datalist
+					setTimeout(() => {
+						this.datalist = this.datalist.concat(res)
+						uni.hideLoading()
+					}, 500)
 				})
 			},
 			onClose() {
 				this.show = false
 			},
+			// 计算距离
+
 			//微信授权登录
 			getUserInfo(e) {
 				var p = this.getSetting();
@@ -341,7 +420,6 @@
 					success: res => {
 						let mapres = res.result
 						this.city = mapres.address_component.city
-						// console.log(mapres,1111)
 					}
 				})
 			},
@@ -381,35 +459,9 @@
 </script>
 
 <style lang="scss">
-	.dizhi {
-		position: relative;
-		display: flex;
-		align-items: center;
-
-		>text {
-			display: inline-block;
-			width: 60vw;
-
-			+image {
-				position: static;
-			}
-		}
-
-	}
-
-	.hsz {
-		+input {
-			width: 282rpx;
-			height: 48rpx;
-			background: #f3f3f3;
-			border-radius: 4rpx;
-			display: inline-block;
-			position: relative;
-			top: 20rpx;
-		}
-	}
-
 	.container {
+		padding-top: 0;
+height: 100%;
 		>.top {
 			background-color: #2E8EF4;
 			width: 96vw;
@@ -454,19 +506,9 @@
 
 	}
 
-	.middle_prop {
-		.ye {
-			margin-top: 149rpx;
-			margin-bottom: 80rpx;
-			display: block;
-
-		}
-
-		// .middle_text{
-		// 	height: 404rpx;
-		// }
-	}
-
+	// .hasinput{
+	// 	margin-top: 0;
+	// }
 	.switch {
 		position: relative;
 		top: 11rpx;

@@ -372,6 +372,23 @@
   height: 100vh;
   font-size: 28rpx;
   background: #f3f3f3;
+  padding-top: 20rpx;
+}
+.dizhi {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+.dizhi > text {
+  display: inline-block;
+  width: 60vw;
+}
+.dizhi > text + image {
+  position: static;
 }
 .icon_44 {
   width: 44rpx;
@@ -529,6 +546,19 @@
 .middle_prop .middle_text .prop_content text,
 .middle_prop .middle_text .prop_content view {
   margin-top: 60rpx;
+}
+.middle_prop .middle_text .prop_content .hasinput {
+  margin-top: 0;
+}
+.middle_prop .middle_text .prop_content .hasinput .hsz + input {
+  width: 282rpx;
+  height: 48rpx;
+  background: #f3f3f3;
+  -webkit-border-radius: 4rpx;
+          border-radius: 4rpx;
+  display: inline-block;
+  position: relative;
+  top: 20rpx;
 }
 .middle_prop .middle_text .prop_bottom {
   height: 226rpx;

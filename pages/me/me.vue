@@ -47,7 +47,6 @@
 </template>
 
 <script>
-	import api from '../../common/api/api.js'
 	export default {
 		data() {
 			return {

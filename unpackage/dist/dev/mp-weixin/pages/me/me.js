@@ -130,56 +130,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var _api = _interopRequireDefault(__webpack_require__(/*! ../../common/api/api.js */ 17));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
 //
 //
 //
@@ -227,10 +178,49 @@ var _api = _interopRequireDefault(__webpack_require__(/*! ../../common/api/api.j
 //
 //
 //
-var _default = { data: function data() {return { ulArr: [{ img: '../../static/jdjl.png', title: '我的接单记录', url: './recive_order/recive_order' }], userInfo: uni.getStorageSync('USERINFO') };}, onShow: function onShow() {// this.userInfo=
-  }, methods: { toPage: function toPage(type, url) {console.log(url);switch (type) {//动态的路径要加./,
-        case 'rechange':uni.navigateTo({ url: 'rechange/rechange' });break;case 'getmoney':uni.navigateTo({ url: 'get_money/get_money' });break;case 'page':uni.navigateTo({ url: url });break;case 'list': // 交易记录
-          uni.navigateTo({ url: 'reansa_list/reansa_list' });break;}} } };exports.default = _default;
+var _default =
+{
+  data: function data() {
+    return {
+      ulArr: [{
+        img: '../../static/jdjl.png',
+        title: '我的接单记录',
+        url: './recive_order/recive_order' }],
+
+      userInfo: uni.getStorageSync('USERINFO') };
+
+  },
+  onShow: function onShow() {
+    // this.userInfo=
+  },
+  methods: {
+    toPage: function toPage(type, url) {
+      console.log(url);
+      switch (type) {
+        //动态的路径要加./,
+        case 'rechange':
+          uni.navigateTo({
+            url: 'rechange/rechange' });
+
+          break;
+        case 'getmoney':
+          uni.navigateTo({
+            url: 'get_money/get_money' });
+
+          break;
+        case 'page':
+          uni.navigateTo({
+            url: url });
+
+          break;
+        case 'list':
+          // 交易记录
+          uni.navigateTo({
+            url: 'reansa_list/reansa_list' });
+
+          break;}
+
+    } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),

@@ -1,0 +1,1 @@
+<view class="container"><view><image src="../../../static/dqq.png" mode></image><view class="title">收款码</view><view><image src="{{info.receiving_qr}}" mode data-event-opts="{{[['tap',[['lookPic',['$0'],['info.receiving_qr']]]]]}}" bindtap="__e"></image></view></view><view data-event-opts="{{[['tap',[['uploadImg',['$event']]]]]}}" class="btn" bindtap="__e">上传微信收款码</view></view>

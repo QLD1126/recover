@@ -130,27 +130,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var _api = _interopRequireDefault(__webpack_require__(/*! ../../../common/api/api.js */ 17));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
 //
 //
 //
@@ -169,7 +149,26 @@ var _api = _interopRequireDefault(__webpack_require__(/*! ../../../common/api/ap
 //
 //
 //
-var _default = { data: function data() {return { params: { page: 1, limit: 10, status: null }, hasMore: true, datalist: [] };}, onLoad: function onLoad() {this.getList(this.params);}, methods: { getList: function getList(params) {var _this = this;uni.showLoading({});
+var _default =
+{
+  data: function data() {
+    return {
+      params: {
+        page: 1,
+        limit: 10,
+        status: null },
+
+      hasMore: true,
+      datalist: [] };
+
+  },
+  onLoad: function onLoad() {
+    this.getList(this.params);
+  },
+  methods: {
+    getList: function getList(params) {var _this = this;
+      uni.showLoading({});
+
 
       // if()
       this.datalist = [];
@@ -178,7 +177,7 @@ var _default = { data: function data() {return { params: { page: 1, limit: 10, s
         page: 1,
         limit: 10 });
 
-      _api.default.BILL(params).then(function (res) {
+      this.$apis.BILL(params).then(function (res) {
         if (res.length < params.limit) {
           _this.hasMore = false;
         }
@@ -186,16 +185,9 @@ var _default = { data: function data() {return { params: { page: 1, limit: 10, s
         uni.hideLoading();
       });
     },
-    navbarTap: function navbarTap(type) {
-      Object.assign(this.params, {
-        status: type,
-        page: 1,
-        limit: 10 });
 
-      this.getList(this.params);
-    },
     loadMore: function loadMore(params) {var _this2 = this;
-      _api.default.BILL(params).then(function (res) {
+      this.$apis.BILL(params).then(function (res) {
         if (res.length < params.limit) {
           _this2.hasMore = false;
         }

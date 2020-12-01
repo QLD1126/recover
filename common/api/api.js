@@ -37,7 +37,15 @@ export default {
 			data
 		})
 	},
-	EDIT_INFO(data){
+	//二维码
+	EDIT_USER(data){
+		return request({
+			url:'/api/recycle/edit',
+			method:'post',
+			data
+		})
+	},
+	SUBMIT_USER(data){
 		return request({
 			url:'/api/recycle/submit',
 			method:'post',

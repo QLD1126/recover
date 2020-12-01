@@ -12,6 +12,8 @@
   "libVersion": "",
   "appid": "wxef32ea7c13f5318c",
   "projectname": "recover",
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
   "condition": {
     "plugin": {
       "list": []
@@ -25,8 +27,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/me/get_money/get_money",
-          "pathName": "pages/me/get_money/get_money",
+          "name": "pages/me/setEwm/setEwm",
+          "pathName": "pages/me/setEwm/setEwm",
           "query": "",
           "scene": null
         }

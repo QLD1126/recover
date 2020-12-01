@@ -25,44 +25,52 @@
 /* 透明度 */
 /* 文章场景相关 */
 .container {
-  padding-top: 0;
-  height: 100%;
-}
-.container > .top {
   background-color: #2E8EF4;
-  width: 96vw;
-  padding: 2vw;
-  color: #fff;
+  font-size: 32rpx;
+  position: static;
+  z-index: -1;
 }
-.container > .top .flex_between {
-  margin-bottom: 25rpx;
-}
-.container > .top .flex_between image {
-  width: 44rpx;
-  height: 44rpx;
+.container > view {
+  margin: 0 auto;
   position: relative;
-  top: 10rpx;
 }
-.container > .top > .tabbar {
+.container > view > view {
+  position: relative;
+}
+.container > view > image {
+  width: 700rpx;
+  height: 688rpx;
+  position: absolute;
+  top: 0;
+}
+.container > view:first-child {
+  width: 700rpx;
+  height: 688rpx;
+}
+.container > view:first-child > view {
   width: 100%;
-  background: #2E8EF4;
-  position: relative;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  text-align: center;
 }
-.container > .top > .tabbar .white {
-  background: #fff;
+.container > view:first-child .title {
+  background: #f3f3f3;
+  color: #2E8EF4;
+  height: 108rpx;
+  line-height: 108rpx;
 }
-.container > .top + image {
-  margin: 261rpx auto;
-  width: 547rpx;
-  height: 342rpx;
-  display: block;
+.container > view:first-child .title + view image {
+  width: 320rpx;
+  height: 320rpx;
+  margin-top: 72rpx;
 }
-.switch {
-  position: relative;
-  top: 11rpx;
-  margin-right: 20rpx;
+.container .btn {
+  width: 464rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: #ffffff;
+  -webkit-border-radius: 44rpx;
+          border-radius: 44rpx;
+  text-align: center;
+  color: #2E8EF4;
+  margin-top: 100rpx;
 }
 

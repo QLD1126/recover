@@ -3,11 +3,14 @@
 		<view class="model top">
 			<image src="../../../static/bgjb.png" mode="" class="model"></image>
 			<view class="">
+				<view class="ewm_btn" @click="toPage">
+					设置收款码
+				</view>
 				<view class="t_28_f">
 					余额（元）
 				</view>
 				<view class="">
-					￥{{info.integral}}
+					￥5.00
 				</view>
 			</view>
 		</view>
@@ -23,8 +26,8 @@
 		</view>
 		<view class="flex_between">
 			<view class="">
-				<image src="../../../static/wxdz.png" class="icon_44" mode=""></image>
-				<text>提现到微信</text>
+				<image src="../../../static/wxdz.png" class="icon" mode=""></image>
+				<text class="">提现到微信</text>
 			</view>
 			<!-- <label class="radio"> -->
 			<view class="">
@@ -33,22 +36,25 @@
 			</view>
 			<!-- </label> -->
 		</view>
-		<view class="btn_line">
+		<view class="btn">
 			提交申请
 		</view>
 	</view>
 </template>
 
 <script>
-	import api from '../../../common/api/api.js'
 	export default {
 		data() {
 			return {
-info:uni.getStorageSync('USERINFO')
+
 			};
 		},
-		onShow() {
-			
+		methods:{
+			toPage(){
+				uni.navigateTo({
+					url:'../setEwm/setEwm'
+				})
+			}
 		}
 	}
 </script>
@@ -67,16 +73,21 @@ info:uni.getStorageSync('USERINFO')
 			line-height: 106rpx;
 			// margin-bottom: 40rpx;
 		}
-		.icon_44{
+		.icon{
+			width: 40rpx;
+			height: 40rpx;
 			margin-right: 20rpx;
 			+text{
 				font-size: 28rpx;
 				font-weight: bold;
 			}
 		}
-		.btn_line{
+		.btn{
 			width: 464rpx;
-			margin-top: 318rpx;
+			// margin-top: 318rpx;
+			    position: absolute;
+			    left: 143rpx;
+			    bottom: 100rpx;
 		}
 		.input{
 			padding: 40rpx;
@@ -87,8 +98,7 @@ info:uni.getStorageSync('USERINFO')
 			position: relative;
 			width: 702rpx;
 			height: 286rpx;
-			// margin-bottom: 60rpx;
-			margin: 20rpx auto 60rpx;
+			margin-bottom: 60rpx;
 			>image {
 				position: absolute;
 				top: 0;
@@ -107,7 +117,19 @@ info:uni.getStorageSync('USERINFO')
 				>view {
 					margin: 0 auto;
 				}
-
+				.ewm_btn{
+					width: 156rpx;
+					height: 52rpx;
+					line-height: 52rpx;
+					background: #ffffff;
+					border-radius: 26rpx;
+					color: #23CED7;
+					font-size: 24rpx;
+					position:absolute;
+					top: 30rpx;
+					right: 30rpx;
+					
+				}
 				>view:last-child {
 					font-size: 60rpx;
 					font-weight: bold;

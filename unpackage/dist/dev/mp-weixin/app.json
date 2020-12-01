@@ -6,13 +6,14 @@
     "pages/me/add_money/add_money",
     "pages/me/recive_order/recive_order",
     "pages/me/get_money/get_money",
-    "pages/me/rechange/rechange"
+    "pages/me/rechange/rechange",
+    "pages/me/setEwm/setEwm"
   ],
   "subPackages": [],
   "window": {
-    "navigationBarTextStyle": "white",
+    "navigationBarTextStyle": "black",
     "navigationBarTitleText": "回收员端11",
-    "navigationBarBackgroundColor": "#2E8EF4",
+    "navigationBarBackgroundColor": "#FFFFFF",
     "backgroundColor": "#F8F8F8"
   },
   "tabBar": {
@@ -38,5 +39,12 @@
       "desc": "获取您的个人以及位置信息"
     }
   },
-  "usingComponents": {}
+  "plugins": {
+    "routePlan": {
+      "version": "1.0.8",
+      "provider": "wx50b5593e81dd937a"
+    }
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap22.json"
 }

@@ -10,7 +10,7 @@
 					{{item.time}}
 				</view>
 			</view>
-			<view :class="item.pm==1?'red':' blue'">
+			<view :class="item.pm==1?'red':'blue'">
 				{{item.pm==1?'+':'-'}}{{item.number}}
 			</view>
 		</view>
@@ -18,7 +18,6 @@
 </template>
 
 <script>
-	import api from '../../../common/api/api.js'
 	export default {
 		data() {
 			return {
@@ -46,7 +45,7 @@
 					page: 1,
 					limit: 10
 				})
-				api.BILL(params).then(res => {
+				this.$apis.BILL(params).then(res => {
 					if (res.length < params.limit) {
 						this.hasMore = false
 					}
@@ -54,16 +53,9 @@
 					uni.hideLoading()
 				})
 			},
-			navbarTap(type) {
-				Object.assign(this.params, {
-					status: type,
-					page: 1,
-					limit: 10
-				})
-				this.getList(this.params)
-			},
+			
 			loadMore(params) {
-				api.BILL(params).then(res => {
+				this.$apis.BILL(params).then(res => {
 					if (res.length < params.limit) {
 						this.hasMore = false
 					}

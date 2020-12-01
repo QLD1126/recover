@@ -130,32 +130,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var _api = _interopRequireDefault(__webpack_require__(/*! ../../../common/api/api.js */ 17));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
 //
 //
 //
@@ -179,8 +154,32 @@ var _api = _interopRequireDefault(__webpack_require__(/*! ../../../common/api/ap
 //
 //
 //
-var _default = { data: function data() {return { amount: '' };}, methods: { sure: function sure(amount) {_api.default.RECHANGE({ amount: amount }).then(function (res) {wx.requestPayment({ appId: res.appId, timeStamp: res.timestamp, nonceStr: res.nonceStr, package: res.package, signType: res.signType, paySign: res.paySign, success: function success(res) {console.log('支付结果', res);}, fail: function fail(err) {// console.log(err, '')
-            uni.showToast({ title: err, duration: 2000 });
+var _default =
+{
+  data: function data() {
+    return {
+      amount: '' };
+
+  },
+  methods: {
+    sure: function sure(amount) {
+      this.$apis.RECHANGE({ amount: amount }).then(function (res) {
+        wx.requestPayment({
+          appId: res.appId,
+          timeStamp: res.timestamp,
+          nonceStr: res.nonceStr,
+          package: res.package,
+          signType: res.signType,
+          paySign: res.paySign,
+          success: function success(res) {
+            console.log('支付结果', res);
+          },
+          fail: function fail(err) {
+            // console.log(err, '')
+            uni.showToast({
+              title: err,
+              duration: 2000 });
+
           } });
 
       });

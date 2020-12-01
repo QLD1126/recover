@@ -56,7 +56,6 @@
 
 			.flex_between {
 				font-size: 24rpx;
-
 				>text:first-child {
 					color: #999;
 
@@ -121,8 +120,24 @@
 		height: 100vh;
 		font-size: 28rpx;
 		background: #f3f3f3;
+		padding-top: 20rpx;
+		
 	}
+	.dizhi {
+		position: relative;
+		display: flex;
+		align-items: center;
 
+		>text {
+			display: inline-block;
+			width: 60vw;
+
+			+image {
+				position: static;
+			}
+		}
+
+	}
 	.icon_44 {
 		width: 44rpx;
 		height: 44rpx;
@@ -275,6 +290,21 @@
 				text,
 				view {
 					margin-top: 60rpx;
+				}
+				.hasinput{
+					margin-top: 0;
+					
+					.hsz {
+						+input {
+							width: 282rpx;
+							height: 48rpx;
+							background: #f3f3f3;
+							border-radius: 4rpx;
+							display: inline-block;
+							position: relative;
+							top: 20rpx;
+						}
+					}
 				}
 			}
 
