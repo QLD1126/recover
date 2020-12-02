@@ -35,16 +35,20 @@
   height: 106rpx;
   line-height: 106rpx;
 }
-.main .icon_44 {
+.main .icon {
+  width: 40rpx;
+  height: 40rpx;
   margin-right: 20rpx;
 }
-.main .icon_44 + text {
+.main .icon + text {
   font-size: 28rpx;
   font-weight: bold;
 }
-.main .btn_line {
+.main .btn {
   width: 464rpx;
-  margin-top: 318rpx;
+  position: absolute;
+  left: 143rpx;
+  bottom: 100rpx;
 }
 .main .input {
   padding: 40rpx;
@@ -55,7 +59,7 @@
   position: relative;
   width: 702rpx;
   height: 286rpx;
-  margin: 20rpx auto 60rpx;
+  margin-bottom: 60rpx;
 }
 .main .top > image {
   position: absolute;
@@ -72,6 +76,19 @@
 }
 .main .top > view > view {
   margin: 0 auto;
+}
+.main .top > view .ewm_btn {
+  width: 156rpx;
+  height: 52rpx;
+  line-height: 52rpx;
+  background: #ffffff;
+  -webkit-border-radius: 26rpx;
+          border-radius: 26rpx;
+  color: #23CED7;
+  font-size: 24rpx;
+  position: absolute;
+  top: 30rpx;
+  right: 30rpx;
 }
 .main .top > view > view:last-child {
   font-size: 60rpx;

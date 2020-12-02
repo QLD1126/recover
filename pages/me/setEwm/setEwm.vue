@@ -20,7 +20,6 @@
 		public_data
 	} from '../../../common/public_data.js'
 	let host = public_data.host
-	console.log(public_data)
 	export default {
 		data() {
 			return {
@@ -119,7 +118,6 @@
 			position: relative;
 			overflow: hidden;
 			border-radius: 10rpx;
-
 			>view {
 				position: relative;
 			}

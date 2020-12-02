@@ -1,6 +1,11 @@
+import {
+	public_data
+} from '../public_data.js'
+
 function req(obj) {
 	return new Promise((resolve, reject) => {
-		const HOST = 'http://192.168.3.48:8082'
+		// const HOST = 'http://192.168.3.48:8082'
+		const HOST = public_data.host
 		// const HOST = 'http://wangye.lncswlgs.com'
 		var method = obj.method || "GET";
 		var url = HOST + obj.url || "";
@@ -26,57 +31,24 @@ function req(obj) {
 						url: '/pages/index/index'
 					})
 				} else if (res.statusCode === 500) {
-					// if(res.)
 					uni.showToast({
 						title: res.data.msg,
 						icon: 'none'
 					})
-					// uni.navigateTo({
-					// 	url:'/pages/index/index'
-					// })
+					
 				} else if (res.statusCode === 200) {
 					switch (res.data.status) {
-						case 400:
-							uni.showToast({
-								title: res.data.msg,
-								icon: 'none'
-							})
-							reject(res.data)
+						case 200:
+							resolve(res.data.data)
 							break;
-						case 401:
-							uni.reLaunch({
+						case 410000:
+						console.log(res.data,'啊啊啊')
+							uni.switchTab({
 								url: '/pages/index/index'
 							})
-							reject(res.data)
 							break;
-						case 404:
-							uni.showToast({
-								title: '用户名被抢注，请重新注册',
-								icon: 'none'
-							})
-							reject(res.data)
-							break
-						case 500:
-							// uni.navigateTo({
-							// 	url:'/pages/index/index'
-							// })
-							if (res.data.msg == '缺少token') {
-								uni.reLaunch({
-									url: '/pages/index/index'
-								})
-								reject(res.data)
-								break
-							} else {
-								uni.showToast({
-									title: res.data.msg,
-									icon: 'none'
-								})
-								reject(res.data)
-								break
-							}
-
 						default:
-							resolve(res.data.data)
+							reject(res.data)
 					}
 				}
 			}),

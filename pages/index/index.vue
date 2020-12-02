@@ -129,8 +129,12 @@
 </template>
 
 <script>
-	import api from '../../common/api/api.js'
+	// import this.$apis from '../../common/this.$apis/this.$apis.js'
 	import qqmapsdk from '../../common/qqmapsdk.js'
+	import {
+		public_data
+	} from '../../common/public_data.js'
+	let socketHost = public_data.socketHost
 	export default {
 		data() {
 			return {
@@ -177,13 +181,36 @@
 						type: -1
 					}
 				],
-
+				// 长连接
+				socketTask: null,
+				// 确保websocket是打开状态
+				is_open_socket: false,
+				timer: null,
+				city: '',
+				location:{
+					lat:'',
+					lng:''
+				},
 			}
 		},
 		onLoad() {
-			// this.changeLogin()
 			this.goLogin(this.loginData)
+			this.userinfo()
+		},
+		onShow() {
+			this.getUserLocation()
+			this.connectSocketInit();
+			this.timer = setInterval(() => {
+				this.getUserLocation()
+			}, 10000)
+
 			this.getList(this.params)
+		},
+		onHide() {
+			if(this.timer){
+				clearInterval(this.timer)
+				this.timer=null
+			}
 		},
 		computed: {
 			hasOrder() {
@@ -196,6 +223,22 @@
 			}
 		},
 		methods: {
+			getUserLocation() {
+				// 地图
+				// var that = this;
+				qqmapsdk.reverseGeocoder({
+					success: (res) => {
+						let a = res.result
+						// console.log(location)
+						this.city = a.address_component.city
+						Object.assign(this.location,{
+							lat:a.location.lat,
+							lng:a.location.lng
+						})
+						this.clickRequest(a.location.lat, a.location.lng)
+					}
+				})
+			},
 			//事件触发，调用接口
 			formSubmit(obj) {
 				let _this = this
@@ -252,7 +295,7 @@
 					content: '确定删除该订单吗?',
 					success: (res) => {
 						if (res.confirm) {
-							api.RECYCLE_REMOVE(id).then(() => {
+							this.$apis.RECYCLE_REMOVE(id).then(() => {
 								this.getList(this.params)
 							})
 						}
@@ -260,7 +303,7 @@
 				})
 			},
 			sure(id) {
-				api.RECYCLE_SURE(id).then(() => {
+				this.$apis.RECYCLE_SURE(id).then(() => {
 					this.params.status = 1
 					this.getList(this.params)
 				})
@@ -273,9 +316,9 @@
 				})
 			},
 			complate(data) {
-				api.RECYCLE_COMPLATE(data.id, data).then(res => {
+				this.$apis.RECYCLE_COMPLATE(data.id, data).then(res => {
 					this.show = false
-					this.params.status=2
+					this.params.status = 2
 					this.getList(this.params)
 				}).catch(err => {
 					console.log(err, 'err')
@@ -289,37 +332,37 @@
 					content: this.userInfo.on_line ? '关闭后系统将不会为你派发订单' : '开启后系统将为您派发订单',
 					success: () => {
 						this.userInfo.on_line = !this.userInfo.on_line
-						api.RECYCLE_LINE(this.userInfo.on_line ? 1 : 0).then(() => {
-							this.getuserinfo()
+						this.$apis.RECYCLE_LINE(this.userInfo.on_line ? 1 : 0).then(() => {
+							this.userinfo()
 						})
 					}
 				})
 			},
 			getList(params) {
-					uni.showLoading({
+				uni.showLoading({
 
-					})
-					// if()
+				})
+				// if()
+				this.hasMore = true
+				Object.assign(params, {
+					page: 1,
+				})
+				this.$apis.RECYLE_LIST(params).then(res => {
 					this.datalist = []
-					this.hasMore = true
-					Object.assign(params, {
-						page: 1,
-					})
-					api.RECYLE_LIST(params).then(res => {
-						if (res.length < params.limit) {
-							this.hasMore = false
-						}
-						if (params.status == 0) {
-							this.formSubmit(res)
-						}
-						//防止还没计算出结果就一把值赋给datalist
-						setTimeout(() => {
-							this.datalist = res
-							uni.hideLoading()
-							console.log(res, this.datalist, 222)
-						}, 500)
-						// this.datalist = res
-					})
+					if (res.length < params.limit) {
+						this.hasMore = false
+					}
+					if (params.status == 0) {
+						this.formSubmit(res)
+					}
+					//防止还没计算出结果就一把值赋给datalist
+					setTimeout(() => {
+						this.datalist = res
+						uni.hideLoading()
+						console.log(res, this.datalist)
+					}, 500)
+					// this.datalist = res
+				})
 			},
 			navbarTap(type) {
 				Object.assign(this.params, {
@@ -329,7 +372,7 @@
 				this.getList(this.params)
 			},
 			loadMore(params) {
-				api.RECYLE_LIST(params).then(res => {
+				this.$apis.RECYLE_LIST(params).then(res => {
 					res.forEach(item => {
 						item.juli = 100
 					})
@@ -380,7 +423,7 @@
 						Object.assign(data, {
 							jsCode: res.code,
 						})
-						api.LOGIN(data).then((res) => {
+						this.$apis.LOGIN(data).then((res) => {
 							// console.log(res, '登录')
 							if (res.cache_key !== '') {
 								Object.assign(this.loginData, {
@@ -391,7 +434,7 @@
 							uni.setStorageSync('LOGIN_DATA', this.loginData)
 							this.loginshow = false
 							// this.setLocation(this.localData)
-							this.getuserinfo()
+							this.userinfo()
 
 							uni.hideLoading()
 						}).catch((error) => {
@@ -401,17 +444,17 @@
 					}
 				});
 			},
-			getuserinfo() {
-				api.USERINFO().then(res => {
+			userinfo() {
+				this.$apis.USERINFO().then(res => {
 					res.on_line = res.on_line == 1 ? true : false
-					this.getUserLocation(res.latitude, res.longitude)
+					this.InverseAnalysis(res.latitude, res.longitude)
 
 					uni.setStorageSync('USERINFO', res)
 					this.userInfo = res
 				})
 			},
-			// 逆解析
-			getUserLocation(lat, lng) {
+			// 计算距离
+			InverseAnalysis(lat, lng) {
 				qqmapsdk.reverseGeocoder({
 					location: {
 						latitude: lat,
@@ -441,6 +484,65 @@
 					console.log(e)
 				});
 			},
+			// 长连接
+			// 进入这个页面的时候创建websocket连接【整个页面随时使用】
+			connectSocketInit() {
+				// 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
+				this.socketTask = uni.connectSocket({
+					// 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
+					url: socketHost,
+					success(data) {
+						console.log("websocket连接成功");
+					},
+				});
+				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
+				this.socketTask.onOpen((res) => {
+					console.log("WebSocket连接正常打开中...！");
+					this.is_open_socket = true;
+					// 注：只有连接正常打开中 ，才能正常成功发送消息
+					this.socketTask.send({
+						data: 'type=2&id='+this.userInfo.id+'&latitude='+this.location.lat+'&longitude='+this.location.lng,
+						async success() {
+							// console.log("消息发送成功!");
+						},
+					});
+					// 注：只有连接正常打开中 ，才能正常收到消息
+					this.socketTask.onMessage((res) => {
+						let obj = JSON.parse(res.data)
+						if (res.data !== '') {
+							
+						}
+						console.log(JSON.parse(res.data),11111)
+					});
+				})
+				// 这里仅是事件监听【如果socket关闭了会执行】
+				this.socketTask.onClose(() => {
+					console.log("已经被关闭了")
+				})
+			},
+			// 关闭websocket【离开这个页面的时候执行关闭】
+			closeSocket() {
+				this.socketTask.close({
+					success(res) {
+						this.is_open_socket = false;
+						console.log("关闭成功", res)
+					},
+					fail(err) {
+						console.log("关闭失败", err)
+					}
+				})
+			},
+			clickRequest(lat,lng) {
+				if (this.is_open_socket) {
+					// websocket的服务器的原理是:发送一次消息,同时返回一组数据【否则服务器会进去死循环崩溃】
+					this.socketTask.send({
+						data: 'type=2&id='+this.userInfo.id+'&latitude='+lat+'&longitude='+lng,
+						async success() {
+							console.log("消息发送成功");
+						},
+					});
+				}
+			},
 		},
 		onReachBottom() {
 			if (this.hasMore) {
@@ -461,7 +563,8 @@
 <style lang="scss">
 	.container {
 		padding-top: 0;
-height: 100%;
+		height: 100%;
+
 		>.top {
 			background-color: #2E8EF4;
 			width: 96vw;
