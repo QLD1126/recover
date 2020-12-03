@@ -24,6 +24,9 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.icon_44 {
+  margin-right: 10rpx;
+}
 .main > view {
   width: 702rpx;
   margin: 0 auto;
@@ -49,6 +52,10 @@
   position: absolute;
   left: 143rpx;
   bottom: 100rpx;
+}
+.main .btn_line {
+  width: 464rpx;
+  margin-top: 10vh;
 }
 .main .input {
   padding: 40rpx;

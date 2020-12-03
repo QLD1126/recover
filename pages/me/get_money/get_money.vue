@@ -10,33 +10,30 @@
 					余额（元）
 				</view>
 				<view class="">
-					￥5.00
+					￥{{info.integral}}
 				</view>
 			</view>
 		</view>
 		<view class="flex_between">
 			<text class="s_title">提款金额</text>
-			<text class="c_28_888">全部</text>
+			<text class="c_28_888" @click="money=info.integral">全部</text>
 		</view>
 		<view class="">
-			<input class="input" type="text" value="" placeholder="请输入提现金额（1元起提）"/>
+			<input class="input" type="digit" v-model="money" placeholder="请输入提现金额（1元起提）" :disabled="info.integral=='0.00'?true:false" />
 		</view>
 		<view class="s_title">
 			到账方式
 		</view>
 		<view class="flex_between">
 			<view class="">
-				<image src="../../../static/wxdz.png" class="icon" mode=""></image>
+				<image src="../../../static/wxdz.png" class="icon_44" mode=""></image>
 				<text class="">提现到微信</text>
 			</view>
-			<!-- <label class="radio"> -->
 			<view class="">
-				<radio value="" /><text></text>
-				<radio value="" /><text></text>
+				<radio checked="true" /><text></text>
 			</view>
-			<!-- </label> -->
 		</view>
-		<view class="btn">
+		<view class="btn_line" @click="sure">
 			提交申请
 		</view>
 	</view>
@@ -46,13 +43,35 @@
 	export default {
 		data() {
 			return {
-
+				info: uni.getStorageSync('USERINFO'),
+				money: ''
 			};
 		},
-		methods:{
-			toPage(){
+		methods: {
+			sure() {
+				uni.showLoading({
+
+				})
+				this.$apis.EXPORT_MONEY({
+					money: this.money
+				}).then((res) => {
+					this.getUserinfo()
+
+				})
+			},
+			getUserinfo() {
+				this.$apis.USERINFO().then(res => {
+					this.info = res
+					uni.setStorageSync('USERINFO', res)
+					// uni.hideLoading()
+					uni.showToast({
+						title: '申请提现成功!'
+					})
+				})
+			},
+			toPage() {
 				uni.navigateTo({
-					url:'../setEwm/setEwm'
+					url: '../setEwm/setEwm'
 				})
 			}
 		}
@@ -60,12 +79,17 @@
 </script>
 
 <style lang="scss">
+	.icon_44 {
+		margin-right: 10rpx;
+	}
+
 	.main {
 		>view {
 			width: 702rpx;
 			margin: 0 auto;
 		}
-		.flex_between{
+
+		.flex_between {
 			background: #fff;
 			width: 700rpx;
 			padding: 0rpx 25rpx;
@@ -73,32 +97,43 @@
 			line-height: 106rpx;
 			// margin-bottom: 40rpx;
 		}
-		.icon{
+
+		.icon {
 			width: 40rpx;
 			height: 40rpx;
 			margin-right: 20rpx;
-			+text{
+
+			+text {
 				font-size: 28rpx;
 				font-weight: bold;
 			}
 		}
-		.btn{
+
+		.btn {
 			width: 464rpx;
 			// margin-top: 318rpx;
-			    position: absolute;
-			    left: 143rpx;
-			    bottom: 100rpx;
+			position: absolute;
+			left: 143rpx;
+			bottom: 100rpx;
 		}
-		.input{
+
+		.btn_line {
+			width: 464rpx;
+			margin-top: 10vh;
+		}
+
+		.input {
 			padding: 40rpx;
 			padding-left: 20rpx;
 			margin-bottom: 60rpx;
 		}
+
 		.top {
 			position: relative;
 			width: 702rpx;
 			height: 286rpx;
 			margin-bottom: 60rpx;
+
 			>image {
 				position: absolute;
 				top: 0;
@@ -117,7 +152,8 @@
 				>view {
 					margin: 0 auto;
 				}
-				.ewm_btn{
+
+				.ewm_btn {
 					width: 156rpx;
 					height: 52rpx;
 					line-height: 52rpx;
@@ -125,11 +161,12 @@
 					border-radius: 26rpx;
 					color: #23CED7;
 					font-size: 24rpx;
-					position:absolute;
+					position: absolute;
 					top: 30rpx;
 					right: 30rpx;
-					
+
 				}
+
 				>view:last-child {
 					font-size: 60rpx;
 					font-weight: bold;

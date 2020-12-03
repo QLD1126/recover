@@ -1,5 +1,9 @@
 <template>
 	<view class="container">
+		<view class="nodata" v-if="datalist.length==0">
+			<image src="../../../static/zwdd.png" mode=""></image>
+			<text class="c_28_888">暂时交易记录</text>
+		</view>
 		<view class="flex_between" v-for="item in datalist" :key='item.id'>
 			<view class="">
 				<view class="a">

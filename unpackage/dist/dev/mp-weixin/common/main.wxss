@@ -285,6 +285,20 @@
   background: #2D8DF4;
   margin-right: 22rpx;
 }
+.nodata {
+  width: 547rpx;
+  margin: 0 auto;
+  margin-top: 20vh;
+  text-align: center;
+  background: transparent !important;
+}
+.nodata > image {
+  width: 547rpx;
+  height: 342rpx;
+}
+.nodata > image + text {
+  color: #ccc;
+}
 .btn_line {
   color: #fff;
   background-image: -webkit-gradient(linear, left top, right top, from(#33a7fa), to(#21d3d3)) !important;
@@ -394,7 +408,7 @@
   width: 44rpx;
   height: 44rpx;
   position: relative;
-  top: 10rpx;
+  top: 15rpx;
 }
 .btn {
   -webkit-border-radius: 10rpx;

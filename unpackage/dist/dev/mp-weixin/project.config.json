@@ -12,20 +12,25 @@
   "libVersion": "",
   "appid": "wxef32ea7c13f5318c",
   "projectname": "recover",
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
   "condition": {
-    "search": {
-      "list": []
-    },
-    "conversation": {
+    "plugin": {
       "list": []
     },
     "game": {
       "list": []
     },
-    "miniprogram": {
+    "gamePlugin": {
       "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/me/get_money/get_money",
+          "pathName": "pages/me/get_money/get_money",
+          "query": "",
+          "scene": null
+        }
+      ]
     }
   }
 }

@@ -7,7 +7,8 @@
     "pages/me/recive_order/recive_order",
     "pages/me/get_money/get_money",
     "pages/me/rechange/rechange",
-    "pages/me/setEwm/setEwm"
+    "pages/me/setEwm/setEwm",
+    "pages/index/recover_add/recover_add"
   ],
   "subPackages": [],
   "window": {
@@ -45,6 +46,5 @@
       "provider": "wx50b5593e81dd937a"
     }
   },
-  "usingComponents": {},
-  "sitemapLocation": "sitemap77.json"
+  "usingComponents": {}
 }

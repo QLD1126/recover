@@ -37,7 +37,14 @@ export default {
 			data
 		})
 	},
-	//二维码
+	// 提现
+	EXPORT_MONEY(data){
+		return request({
+			url:'/api/recycle/extract/cash',
+			method:'post',
+			data
+		})
+	},
 	EDIT_USER(data){
 		return request({
 			url:'/api/recycle/edit',
@@ -45,7 +52,7 @@ export default {
 			data
 		})
 	},
-	SUBMIT_USER(data){
+	RECYCLE_USER(data){
 		return request({
 			url:'/api/recycle/submit',
 			method:'post',

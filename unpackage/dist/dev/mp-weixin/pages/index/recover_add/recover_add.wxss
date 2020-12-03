@@ -25,47 +25,57 @@
 /* 透明度 */
 /* 文章场景相关 */
 .container {
-  padding-top: 0;
   height: 100vh;
+  padding-top: 1rpx;
 }
-.container > .top {
-  background-color: #2E8EF4;
-  width: 96vw;
-  padding: 2vw;
-  color: #fff;
+.container .s_title {
+  font-size: 32rpx;
+  margin-left: 20rpx;
 }
-.container > .top > view:first-child {
-  margin: 5vh 0;
-}
-.container > .top .flex_between {
-  margin-bottom: 25rpx;
-}
-.container > .top .flex_between image {
-  width: 44rpx;
-  height: 44rpx;
-  position: relative;
-  top: 10rpx;
-}
-.container > .top > .tabbar {
-  width: 100%;
-  background: #2E8EF4;
-  position: relative;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-}
-.container > .top > .tabbar .white {
+.container > view {
   background: #fff;
+  padding-top: 40rpx;
+  padding-left: 24rpx;
+  margin: 20rpx 0;
 }
-.container > .top + image {
-  margin: 261rpx auto;
-  width: 547rpx;
-  height: 342rpx;
-  display: block;
+.container .upload {
+  padding: 58rpx 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: space-around;
+          justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
 }
-.switch {
-  position: relative;
-  top: 11rpx;
-  margin-right: 20rpx;
+.container .upload > view {
+  width: 315rpx;
+  text-align: center;
+  font-weight: bold;
+}
+.container .upload > view image {
+  width: 315rpx;
+  height: 202rpx;
+  margin-bottom: 38rpx;
+}
+.container .btn_line {
+  margin: 100rpx auto 90rpx;
+}
+.else {
+  width: 670rpx;
+  height: 368rpx;
+  line-height: 368rpx;
+  background: #f3f3f3;
+  -webkit-border-radius: 10rpx;
+          border-radius: 10rpx;
+  text-align: center;
+  color: #999999;
+  font-size: 32rpx;
+  font-weight: bold;
+  margin: 30vh auto;
+}
+.else > view {
+  width: 190rpx;
 }
 

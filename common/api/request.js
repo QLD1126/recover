@@ -27,7 +27,7 @@ function req(obj) {
 			success: ((res) => {
 				if (res.statusCode === 403 || res.statusCode === 401) {
 					// 错误处理，返回登录页
-					uni.reLaunch({
+					uni.switchTab({
 						url: '/pages/index/index'
 					})
 				} else if (res.statusCode === 500) {
@@ -35,19 +35,41 @@ function req(obj) {
 						title: res.data.msg,
 						icon: 'none'
 					})
-					
+
 				} else if (res.statusCode === 200) {
 					switch (res.data.status) {
 						case 200:
 							resolve(res.data.data)
 							break;
 						case 410000:
-						console.log(res.data,'啊啊啊')
+							// console.log(res.data,'啊啊啊')
 							uni.switchTab({
 								url: '/pages/index/index'
 							})
 							break;
+						case 520000:
+							// 不是回收员
+							uni.navigateTo({
+								url: '/pages/index/recover_add/recover_add?status=' + 1
+							})
+							break;
+						case 520004:
+							// 审核中
+							uni.navigateTo({
+								url: '/pages/index/recover_add/recover_add?status=' + 2
+							})
+							break;
+						case 400:
+							reject(res.data)
+							break;
 						default:
+							uni.showToast({
+								title: res.data.status
+							})
+							// uni.showModal({
+							// 	content:err.msg,
+							// 	showCancel:false
+							// })
 							reject(res.data)
 					}
 				}

@@ -44,6 +44,7 @@
 }
 .container .btn {
   width: 464rpx;
+  margin: 0 auto;
   margin-top: 101rpx;
   -webkit-border-radius: 44rpx;
           border-radius: 44rpx;

@@ -1,8 +1,11 @@
 <template>
 	<view class="container">
 		<view class="top">
+			<view class="">
+				{{userInfo.routine_name}}
+			</view>
 			<view class="flex_between">
-				<view class="">
+				<view class="" @click="getuserSet">
 					<image class="icon_44" src="../../static/dz.png" mode=""></image>
 					<text>当前位置：{{city}}</text>
 				</view>
@@ -21,7 +24,13 @@
 				</view>
 			</view>
 		</view>
-		<image src="../../static/zwdd.png" mode="" v-if="hasOrder"></image>
+		<!-- <view class="" @click="a">
+			sfdsudhfuifd
+		</view> -->
+		<view class="nodata" v-if="hasOrder">
+			<image src="../../static/zwdd.png" mode=""></image>
+			<text class="c_28_888">暂时没有订单</text>
+		</view>
 		<view v-else>
 			<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 				<view class="flex_between">
@@ -95,7 +104,7 @@
 					</text>
 				</view>
 				<view class=" prop_bottom">
-					<view class="btn btn_green">
+					<view class="btn btn_green" @click="getuserSet">
 						打开授权设置页
 					</view>
 				</view>
@@ -141,7 +150,7 @@
 				// 弹出层
 				loginshow: false,
 				show: false,
-				prop: 'zz',
+				prop: '位置',
 				actions: [{
 					name: '获取用户信息',
 					color: '#07c160',
@@ -158,12 +167,13 @@
 					status: 0,
 				},
 				hasMore: true,
+				loading: false,
 				// 页面
 
 				loginData: uni.getStorageSync('LOGIN_DATA') || {},
 				userInfo: uni.getStorageSync('USERINFO') || {},
 				datalist: [],
-				city: '',
+				city: '暂未开启定位',
 				titleArr: [{
 						title: '新订单',
 						type: 0
@@ -181,36 +191,58 @@
 						type: -1
 					}
 				],
-				// 长连接
+				// 长连接_定位
 				socketTask: null,
 				// 确保websocket是打开状态
 				is_open_socket: false,
 				timer: null,
-				city: '',
-				location:{
-					lat:'',
-					lng:''
+				location: {
+					lat: '',
+					lng: ''
 				},
+				// 长连接_订单
+				socketTask_order: null,
+				// 确保websocket是打开状态
+				is_open_socket_order: false,
+				// timer: null,
 			}
 		},
 		onLoad() {
-			this.goLogin(this.loginData)
-			this.userinfo()
+			this.getSetting_info().then(res => {
+				console.log(res, 999)
+				this.loginshow = !res
+				if (res) {
+					this.goLogin(uni.getStorageSync('LOGIN_DATA'))
+				} else {
+
+				}
+			})
+			this.getUserLocation()
+
 		},
 		onShow() {
-			this.getUserLocation()
-			this.connectSocketInit();
-			this.timer = setInterval(() => {
-				this.getUserLocation()
-			}, 10000)
-
+			this.connectSocketInit_order()
+			this.getSetting_local().then(res => {
+				this.show = !res
+				// this.show=true
+				// this.prop = '位置'
+				if (res) {
+					// this.getUserLocation()
+					this.connectSocketInit_local()
+					this.timer = setInterval(() => {
+						this.getUserLocation()
+						this.clickRequest_order()
+					}, 10000)
+					// 最新订单列表
+				} else {
+					this.prop = '位置'
+				}
+			})
 			this.getList(this.params)
 		},
-		onHide() {
-			if(this.timer){
-				clearInterval(this.timer)
-				this.timer=null
-			}
+		beforeDestroy() {
+			this.closeSocket();
+			this.closeSocket_order()
 		},
 		computed: {
 			hasOrder() {
@@ -223,6 +255,52 @@
 			}
 		},
 		methods: {
+			getuserSet() {
+				uni.openSetting({
+					success: (setRes) => {
+						if (setRes.authSetting['scope.userLocation']) {
+							uni.showLoading({
+								title: '定位中...'
+							})
+							this.getUserLocation()
+						}
+					}
+				})
+			},
+			getSetting_local() {
+				return new Promise(function(resolve, reject) {
+					uni.getSetting({
+						success: function(res) {
+							if (res.authSetting['scope.userLocation']) {
+								// console.log('存在');
+								resolve(true);
+							} else {
+								// console.log('不存在');
+								resolve(false);
+							}
+						}
+					})
+				}).catch((e) => {
+					console.log(e)
+				});;
+			},
+			getSetting_info() {
+				return new Promise(function(resolve, reject) {
+					uni.getSetting({
+						success: function(res) {
+							if (res.authSetting['scope.userInfo']) {
+								// console.log('存在');
+								resolve(true);
+							} else {
+								// console.log('不存在');
+								resolve(false);
+							}
+						}
+					})
+				}).catch((e) => {
+					console.log(e)
+				});;
+			},
 			getUserLocation() {
 				// 地图
 				// var that = this;
@@ -231,27 +309,28 @@
 						let a = res.result
 						// console.log(location)
 						this.city = a.address_component.city
-						Object.assign(this.location,{
-							lat:a.location.lat,
-							lng:a.location.lng
+						Object.assign(this.location, {
+							lat: a.location.lat,
+							lng: a.location.lng
 						})
 						this.clickRequest(a.location.lat, a.location.lng)
 					}
 				})
 			},
-			//事件触发，调用接口
-			formSubmit(obj) {
+			//计算距离
+			InverseAnalysis(arr) {
 				let _this = this
 				let start = {
 					latitude: _this.userInfo.latitude,
 					longitude: _this.userInfo.longitude
 				}
 				//调用距离计算接口
-				obj.forEach(item => {
+				arr.forEach(item => {
 					let end = [{
 						latitude: item.user_latitude,
 						longitude: item.user_longitude
 					}]
+					console.log(1111, end)
 					qqmapsdk.calculateDistance({
 						from: start || '', //若起点有数据则采用起点坐标，若为空默认当前地址
 						to: end, //终点坐标
@@ -353,11 +432,12 @@
 						this.hasMore = false
 					}
 					if (params.status == 0) {
-						this.formSubmit(res)
+						this.InverseAnalysis(res)
 					}
 					//防止还没计算出结果就一把值赋给datalist
 					setTimeout(() => {
 						this.datalist = res
+						this.loading = false
 						uni.hideLoading()
 						console.log(res, this.datalist)
 					}, 500)
@@ -380,7 +460,7 @@
 						this.hasMore = false
 					}
 					if (params.status == 0) {
-						this.formSubmit(res)
+						this.InverseAnalysis(res)
 					}
 					//防止还没计算出结果就一把值赋给datalist
 					setTimeout(() => {
@@ -392,15 +472,15 @@
 			onClose() {
 				this.show = false
 			},
-			// 计算距离
-
 			//微信授权登录
 			getUserInfo(e) {
-				var p = this.getSetting();
+				var p = this.getSetting_info();
 				p.then((isAuth) => {
 					console.log('是否已经授权', isAuth);
 					if (isAuth) {
-						uni.showLoading({})
+						uni.showLoading({
+							title: '登录中...'
+						})
 						let res = e.detail
 						Object.assign(this.loginData, {
 							iv: res.iv,
@@ -435,11 +515,20 @@
 							this.loginshow = false
 							// this.setLocation(this.localData)
 							this.userinfo()
-
 							uni.hideLoading()
 						}).catch((error) => {
+							uni.hideLoading()
 							this.loginshow = true
-							console.log(error, this.loginshow)
+							uni.showModal({
+								content: error.msg + ',点击重试',
+								showCancel: false,
+								success: (res) => {
+									if (res.confirm) {
+										this.goLogin()
+									}
+								}
+							})
+							// console.log(error, this.loginshow)
 						})
 					}
 				});
@@ -447,23 +536,10 @@
 			userinfo() {
 				this.$apis.USERINFO().then(res => {
 					res.on_line = res.on_line == 1 ? true : false
-					this.InverseAnalysis(res.latitude, res.longitude)
+					// this.InverseAnalysis(res.latitude, res.longitude)
 
 					uni.setStorageSync('USERINFO', res)
 					this.userInfo = res
-				})
-			},
-			// 计算距离
-			InverseAnalysis(lat, lng) {
-				qqmapsdk.reverseGeocoder({
-					location: {
-						latitude: lat,
-						longitude: lng
-					},
-					success: res => {
-						let mapres = res.result
-						this.city = mapres.address_component.city
-					}
 				})
 			},
 			//获取用户的当前设置
@@ -486,38 +562,38 @@
 			},
 			// 长连接
 			// 进入这个页面的时候创建websocket连接【整个页面随时使用】
-			connectSocketInit() {
+			// 定位
+			connectSocketInit_local() {
 				// 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
 				this.socketTask = uni.connectSocket({
 					// 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
 					url: socketHost,
 					success(data) {
-						console.log("websocket连接成功");
+						console.log("定位长连接成功");
 					},
 				});
 				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
 				this.socketTask.onOpen((res) => {
-					console.log("WebSocket连接正常打开中...！");
+					console.log("定位连接正常打开中...！");
 					this.is_open_socket = true;
 					// 注：只有连接正常打开中 ，才能正常成功发送消息
 					this.socketTask.send({
-						data: 'type=2&id='+this.userInfo.id+'&latitude='+this.location.lat+'&longitude='+this.location.lng,
+						data: 'type=2&id=' + this.userInfo.id + '&latitude=' + this.location.lat + '&longitude=' + this.location.lng,
 						async success() {
 							// console.log("消息发送成功!");
 						},
 					});
 					// 注：只有连接正常打开中 ，才能正常收到消息
 					this.socketTask.onMessage((res) => {
-						let obj = JSON.parse(res.data)
 						if (res.data !== '') {
-							
+							let obj = JSON.parse(res.data)
 						}
-						console.log(JSON.parse(res.data),11111)
+						console.log(res.data, '定位结果')
 					});
 				})
 				// 这里仅是事件监听【如果socket关闭了会执行】
 				this.socketTask.onClose(() => {
-					console.log("已经被关闭了")
+					console.log("定位已经被关闭了")
 				})
 			},
 			// 关闭websocket【离开这个页面的时候执行关闭】
@@ -525,27 +601,102 @@
 				this.socketTask.close({
 					success(res) {
 						this.is_open_socket = false;
-						console.log("关闭成功", res)
+						console.log("定位关闭成功", res)
+					},
+					fail(err) {
+						console.log("定位关闭失败", err)
+					}
+				})
+			},
+			clickRequest(lat, lng) {
+				if (this.is_open_socket) {
+					// websocket的服务器的原理是:发送一次消息,同时返回一组数据【否则服务器会进去死循环崩溃】
+					this.socketTask.send({
+						data: 'type=2&id=' + this.userInfo.id + '&latitude=' + lat + '&longitude=' + lng,
+						async success() {
+							console.log("定位消息发送成功");
+						},
+					});
+				}
+			},
+			// 新订单
+			connectSocketInit_order() {
+				// 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
+				this.socketTask_order = uni.connectSocket({
+					// 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
+					url: socketHost,
+					success(data) {
+						console.log("订单长连接成功");
+					},
+				});
+				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
+				this.socketTask_order.onOpen((res) => {
+					console.log("订单连接正常打开中...！");
+					this.is_open_socket_order = true;
+					// 注：只有连接正常打开中 ，才能正常成功发送消息
+					this.socketTask_order.send({
+						data: 'type=3&id=' + this.userInfo.id,
+						async success() {
+							console.log("111订单消息发送成功!");
+						},
+					});
+					// 注：只有连接正常打开中 ，才能正常收到消息
+					this.socketTask_order.onMessage((res) => {
+						if (res.data !== '') {
+							let obj = JSON.parse(res.data)
+							console.log(res.data, '订单结果')
+						}
+					});
+				})
+				// 这里仅是事件监听【如果socket关闭了会执行】
+				this.socketTask_order.onClose(() => {
+					console.log("订单已经被关闭了")
+				})
+			},
+			// 关闭websocket【离开这个页面的时候执行关闭】
+			closeSocket_order() {
+				this.socketTask_order.close({
+					success(res) {
+						this.is_open_socket_order = false;
+						console.log("订单关闭成功", res)
 					},
 					fail(err) {
 						console.log("关闭失败", err)
 					}
 				})
 			},
-			clickRequest(lat,lng) {
-				if (this.is_open_socket) {
+			clickRequest_order(lat, lng) {
+				if (this.is_open_socket_order) {
 					// websocket的服务器的原理是:发送一次消息,同时返回一组数据【否则服务器会进去死循环崩溃】
-					this.socketTask.send({
-						data: 'type=2&id='+this.userInfo.id+'&latitude='+lat+'&longitude='+lng,
+					this.socketTask_order.send({
+						data: 'type=3&id=' + this.userInfo.id,
 						async success() {
-							console.log("消息发送成功");
+							console.log("订单消息发送成功");
 						},
 					});
 				}
 			},
+
+		},
+		onHide() {
+			// tab页面使用onhide
+			console.log('hide111', this.timer)
+			if (this.timer) {
+				clearInterval(this.timer)
+				this.timer = null
+			}
+			console.log('hide222', this.timer)
+		},
+		onPullDownRefresh() {
+			this.loading = true
+			this.getList(this.params)
+			setTimeout(() => {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		onReachBottom() {
-			if (this.hasMore) {
+			// 下拉状态触底
+			if (this.hasMore && !this.loading) {
 				uni.showLoading({})
 				this.params.page++
 				// console.log(this.params, 11)
@@ -557,19 +708,27 @@
 				})
 			}
 		},
+
 	}
 </script>
 
 <style lang="scss">
 	.container {
 		padding-top: 0;
-		height: 100%;
+		height: 100vh;
 
 		>.top {
 			background-color: #2E8EF4;
 			width: 96vw;
 			padding: 2vw;
 			color: #fff;
+
+			>view:first-child {
+				margin: 5vh 0;
+				font-size: 32rpx;
+				// color: #fff;
+				font-weight: bold;
+			}
 
 			.flex_between {
 				margin-bottom: 25rpx;

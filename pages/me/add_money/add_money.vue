@@ -78,6 +78,7 @@
 	.btn{
 		// margin: ;
 		width: 464rpx;
+		margin: 0 auto;
 		margin-top: 101rpx;
 		border-radius:44rpx ;
 	}

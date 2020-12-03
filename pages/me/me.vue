@@ -1,11 +1,11 @@
 <template>
 	<view class="container">
-		<image src="../../static/bgjb.png" class="bg" mode=""></image>
+		<image src="../../static/bgjb.png" class="bg" mode="" ></image>
 		<view class="">
 			<view class="top">
 				<view class="flex_between">
 					<view class="">
-						<image :src="userInfo.avatar" mode=""></image>
+						<image @click="lookPic(userInfo.avatar)" :src="userInfo.avatar" mode=""></image>
 						<text>{{userInfo.nickname}}</text>
 					</view>
 					<view class="">
@@ -21,7 +21,7 @@
 							充值
 						</view>
 					</view>
-					<view >
+					<view>
 						<text @click="toPage('list')">环保币记录</text>
 						<view class="" @click="toPage('getmoney')">
 							提现
@@ -59,22 +59,48 @@
 			};
 		},
 		onShow() {
-			// this.userInfo=
+			this.getUserinfo()
 		},
 		methods: {
+			getUserinfo() {
+				this.$apis.USERINFO().then(res => {
+					this.userInfo = res
+					uni.setStorageSync('USERINFO', res)
+				})
+			},
+			lookPic(url){
+				uni.previewImage({
+					urls:url
+				})
+			},
 			toPage(type, url) {
-				console.log(url)
 				switch (type) {
 					//动态的路径要加./,
 					case 'rechange':
-						uni.navigateTo({
-							url: 'rechange/rechange',
-						})
+						if (this.userInfo.open_pay == 1) {
+							uni.navigateTo({
+								url: 'rechange/rechange',
+							})
+						} else {
+							uni.showModal({
+								title: '提示',
+								content: '暂未开启',
+								showCancel: false
+							})
+						}
 						break;
 					case 'getmoney':
-						uni.navigateTo({
-							url: 'get_money/get_money'
-						})
+						if (this.userInfo.open_pay == 1) {
+							uni.navigateTo({
+								url: 'get_money/get_money'
+							})
+						} else {
+							uni.showModal({
+								title: '提示',
+								content: '暂未开启',
+								showCancel: false
+							})
+						}
 						break;
 					case 'page':
 						uni.navigateTo({
@@ -82,11 +108,11 @@
 						})
 						break;
 					case 'list':
-					// 交易记录
-					uni.navigateTo({
-						url:'reansa_list/reansa_list',
-					})
-					break;
+						// 交易记录
+						uni.navigateTo({
+							url: 'reansa_list/reansa_list',
+						})
+						break;
 				}
 			},
 		}
@@ -114,13 +140,14 @@
 		position: relative;
 
 		.flex_between:first-child {
-			margin-top: 62rpx;
+			margin-top: 8vh;
 			color: #fff;
 			font-size: 28rpx;
 
 			image {
 				width: 88rpx;
 				height: 88rpx;
+				border-radius: 50%;
 				margin-right: 20rpx;
 
 				+text {

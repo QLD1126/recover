@@ -1,6 +1,10 @@
 <template>
 	<view class="container">
-		<view class="model_jiedan" v-for="item in datalist">
+		<view class="nodata" v-if="datalist.length==0">
+			<image src="../../../static/zwdd.png" mode=""></image>
+			<text class="c_28_888">暂时没有订单</text>
+		</view>
+		<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 			<view class="flex_between">
 				<text>订单编号：{{item.order_id}}</text>
 				<text :style="(params.status==2||params.status==-1)?'color:#666':'color:#2E8EF4'">{{item.status==0?'新订单':item.status==1?'已接单':item.status==2?'已完成':'已取消'}}</text>

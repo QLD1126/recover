@@ -13,7 +13,7 @@
 			</view>
 			<view class="flex_between_list flex_between">
 				<text class="bolder">￥</text>
-				<input type="number" v-model="amount" />
+				<input type="digit" v-model="amount" />
 			</view>
 		</view>
 		<view class="btn btn_bule" @click="sure(amount)">
