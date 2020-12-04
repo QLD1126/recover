@@ -13,24 +13,21 @@
   "appid": "wxef32ea7c13f5318c",
   "projectname": "recover",
   "condition": {
-    "plugin": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
       "list": []
     },
     "game": {
-      "list": []
-    },
-    "gamePlugin": {
+      "current": -1,
       "list": []
     },
     "miniprogram": {
-      "list": [
-        {
-          "name": "pages/me/get_money/get_money",
-          "pathName": "pages/me/get_money/get_money",
-          "query": "",
-          "scene": null
-        }
-      ]
+      "current": -1,
+      "list": []
     }
   }
 }

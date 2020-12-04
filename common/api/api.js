@@ -29,6 +29,12 @@ export default {
 			params
 		})
 	},
+	INDEX(){
+		return request({
+			url:'/api/recycle/index',
+			method:'get'
+		})
+	},
 	// 充值
 	RECHANGE(data){
 		return request({

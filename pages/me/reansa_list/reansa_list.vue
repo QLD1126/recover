@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="nodata" v-if="datalist.length==0">
 			<image src="../../../static/zwdd.png" mode=""></image>
-			<text class="c_28_888">暂时交易记录</text>
+			<text class="c_28_888">暂无交易记录</text>
 		</view>
 		<view class="flex_between" v-for="item in datalist" :key='item.id'>
 			<view class="">
@@ -76,6 +76,9 @@
 				// console.log(this.params, 11)
 				this.loadMore(this.params)
 			} else {
+				if(this.datalist.length==0){
+					return
+				}
 				uni.showToast({
 					title: '已加载全部',
 					icon: 'none'
@@ -87,7 +90,7 @@
 
 <style lang="scss">
 	.container {
-		padding-top: 10rpx;
+		padding-top: 20rpx;
 	}
 
 	.flex_between {

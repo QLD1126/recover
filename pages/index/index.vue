@@ -2,10 +2,10 @@
 	<view class="container">
 		<view class="top">
 			<view class="">
-				{{userInfo.routine_name}}
+				{{routine_name}}
 			</view>
 			<view class="flex_between">
-				<view class="" @click="getuserSet">
+				<view class="" @click="getlocalset">
 					<image class="icon_44" src="../../static/dz.png" mode=""></image>
 					<text>当前位置：{{city}}</text>
 				</view>
@@ -169,7 +169,7 @@
 				hasMore: true,
 				loading: false,
 				// 页面
-
+				routine_name: '',
 				loginData: uni.getStorageSync('LOGIN_DATA') || {},
 				userInfo: uni.getStorageSync('USERINFO') || {},
 				datalist: [],
@@ -208,24 +208,25 @@
 			}
 		},
 		onLoad() {
+			this.$apis.INDEX().then(res => {
+				this.routine_name=res.routine_name
+			})
+			this.getUserLocation()
 			this.getSetting_info().then(res => {
 				console.log(res, 999)
 				this.loginshow = !res
 				if (res) {
 					this.goLogin(uni.getStorageSync('LOGIN_DATA'))
 				} else {
-
+					this.loginshow = true
 				}
 			})
-			this.getUserLocation()
-
 		},
 		onShow() {
+			this.userInfo = uni.getStorageSync('USERINFO')
 			this.connectSocketInit_order()
 			this.getSetting_local().then(res => {
 				this.show = !res
-				// this.show=true
-				// this.prop = '位置'
 				if (res) {
 					// this.getUserLocation()
 					this.connectSocketInit_local()
@@ -255,6 +256,15 @@
 			}
 		},
 		methods: {
+			getlocalset(){
+				this.getSetting_local().then(res=>{
+					if(res){
+						this.getUserLocation()
+					}else{
+						this.show=true
+					}
+				})
+			},
 			getuserSet() {
 				uni.openSetting({
 					success: (setRes) => {
@@ -449,7 +459,9 @@
 					status: type,
 					page: 1,
 				})
-				this.getList(this.params)
+				if (this.userInfo.on_line) {
+					this.getList(this.params)
+				}
 			},
 			loadMore(params) {
 				this.$apis.RECYLE_LIST(params).then(res => {

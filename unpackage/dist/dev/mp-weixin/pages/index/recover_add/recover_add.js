@@ -181,6 +181,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
 var _public_data = __webpack_require__(/*! ../../../common/public_data.js */ 13); //
 //
 //
@@ -230,19 +237,19 @@ var _public_data = __webpack_require__(/*! ../../../common/public_data.js */ 13)
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 // import this.$apis from '../../../common/this.$apis/this.$apis.js'
-var host = _public_data.public_data.host;var _default = { data: function data() {return { open_recycle: 1, aaa: '../../../static/images/sfszm.png', formData: { card_img: [] }, show: false, userArr: [{ title: '姓名', placeholder: '请输入姓名', value: '', key: 'real_name', type: 'text', confirmtype: 'next' }, { title: '联系电话', placeholder: '请输入联系电话', value: '', key: 'phone', type: 'number', confirmtype: 'next' }, { title: '身份证号码', placeholder: '请输入身份证号码', value: '', key: 'card_id', type: 'idcard', confirmtype: 'done' }] };}, // onShow() {
+var host = _public_data.public_data.host;var _default = { data: function data() {return { open_recycle: uni.getStorageSync('open_recycle'), aaa: '../../../static/images/sfszm.png', formData: { card_img: [] }, show: false, userArr: [{ title: '姓名', placeholder: '请输入姓名', value: '', key: 'real_name', type: 'text', confirmtype: 'next' }, { title: '联系电话', placeholder: '请输入联系电话', value: '', key: 'phone', type: 'number', confirmtype: 'next' }, { title: '身份证号码', placeholder: '请输入身份证号码', value: '', key: 'card_id', type: 'idcard', confirmtype: 'done' }] };}, // onShow() {
   // 	// this.useinfo()
   // },
-  onLoad: function onLoad(options) {this.open_recycle = options.status;}, methods: { close: function close() {this.show = false;uni.switchTab({ url: '../me' });},
-    useinfo: function useinfo() {var _this = this;
-      this.$apis.USERINFO().then(function (res) {
-        uni.setStorageSync('USERINFO', res);
-      }).catch(function (err) {
-        // if(err)
-        console.log(err);
-        _this.open_recycle = 2;
-      });
+  onLoad: function onLoad(options) {this.open_recycle = options.status;}, onShow: function onShow() {this.open_recycle = uni.getStorageSync('open_recycle');}, methods: { close: function close() {this.show = false;this.open_recycle = 2;}, useinfo: function useinfo() {var _this = this;this.$apis.USERINFO().then(function (res) {uni.setStorageSync('USERINFO', res);}).catch(function (err) {// if(err)
+        console.log(err);_this.open_recycle = 2;});
     },
     sure: function sure(data) {var _this2 = this;
       uni.showLoading({
@@ -259,12 +266,13 @@ var host = _public_data.public_data.host;var _default = { data: function data() 
         // this.show=true
         _this2.$apis.USERINFO().then(function (res) {
           uni.setStorageSync('USERINFO', res);
+          uni.setStorageSync('open_recycle', 2);
           // this.open_recycle=res.open_recycle
           uni.hideLoading();
-          // this.show = true
-          uni.switchTab({
-            url: '../index' });
-
+          _this2.show = true;
+          // uni.switchTab({
+          // 	url:'../index'
+          // })
         });
       }).catch(function (err) {
         uni.hideLoading();

@@ -8063,6 +8063,12 @@ var _default =
       params: params });
 
   },
+  INDEX: function INDEX() {
+    return (0, _request.default)({
+      url: '/api/recycle/index',
+      method: 'get' });
+
+  },
   // 充值
   RECHANGE: function RECHANGE(data) {
     return (0, _request.default)({
@@ -8182,27 +8188,91 @@ function req(obj) {
 
 
         } else if (res.statusCode === 200) {
+
           switch (res.data.status) {
             case 200:
               resolve(res.data.data);
               break;
             case 410000:
+              // 未登录
               // console.log(res.data,'啊啊啊')
-              uni.switchTab({
-                url: '/pages/index/index' });
+              uni.hideLoading();
+              uni.showModal({
+                title: res.data.msg,
+                showCancel: false,
+                success: function success(res) {
+                  if (res.confirm) {
+                    uni.switchTab({
+                      url: '/pages/index/index' });
 
+                  }
+                } });
+
+              reject(res.data);
+              break;
+            case 41000001:
+              // 登录状态失败
+              uni.hideLoading();
+              uni.showModal({
+                title: res.data.msg,
+                showCancel: false,
+                success: function success(res) {
+                  if (res.confirm) {
+                    uni.removeStorageSync('LOGIN_DATA');
+                    uni.removeStorageSync('TOKEN');
+                    uni.removeStorageSync('USERINFO');
+                    uni.switchTab({
+                      url: '/pages/index/index' });
+
+                  }
+                } });
+
+              reject(res.data);
+              break;
+            // 登录状态有误
+            case 41000002:
+              uni.hideLoading();
+              uni.showModal({
+                title: res.data.msg,
+                showCancel: false,
+                success: function success(res) {
+                  if (res.confirm) {
+                    uni.removeStorageSync('LOGIN_DATA');
+                    uni.removeStorageSync('TOKEN');
+                    uni.removeStorageSync('USERINFO');
+                    uni.switchTab({
+                      url: '/pages/index/index' });
+
+                  }
+                } });
+
+              reject(res.data);
               break;
             case 520000:
               // 不是回收员
-              uni.navigateTo({
-                url: '/pages/index/recover_add/recover_add?status=' + 1 });
+              uni.hideLoading();
+              uni.showModal({
+                content: res.data.msg,
+                showCancel: false,
+                success: function success(res) {
+                  if (res.confirm) {
+                    uni.setStorageSync('open_recycle', 1);
+                    uni.navigateTo({
+                      url: '/pages/index/recover_add/recover_add?status=' + 1 });
 
+                  }
+                } });
+
+              reject(res.data);
               break;
             case 520004:
               // 审核中
+              uni.hideLoading();
+              uni.setStorageSync('open_recycle', 2);
               uni.navigateTo({
                 url: '/pages/index/recover_add/recover_add?status=' + 2 });
 
+              reject(res.data);
               break;
             case 400:
               reject(res.data);

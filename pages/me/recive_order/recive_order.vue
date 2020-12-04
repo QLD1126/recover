@@ -186,6 +186,9 @@
 				// console.log(this.params, 11)
 				this.loadMore(this.params)
 			} else {
+				if(this.datalist.length==0){
+					return
+				}
 				uni.showToast({
 					title: '已加载全部',
 					icon: 'none'
@@ -196,6 +199,9 @@
 </script>
 
 <style lang="scss">
+	.container{
+		    height: 98.1vh;
+	}
 .model_jiedan {
 	margin-top: 0;
 	.flex_between {

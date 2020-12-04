@@ -125,11 +125,10 @@
 	}
 
 	.bg {
-		width: 900rpx;
+		width: 100vw;
 		height: 427rpx;
 		position: absolute;
 		top: -50rpx;
-		left: -100rpx;
 		z-index: -1;
 	}
 

@@ -323,6 +323,9 @@ var _default =
       // console.log(this.params, 11)
       this.loadMore(this.params);
     } else {
+      if (this.datalist.length == 0) {
+        return;
+      }
       uni.showToast({
         title: '已加载全部',
         icon: 'none' });

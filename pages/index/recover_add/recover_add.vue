@@ -33,13 +33,20 @@
 			立即入驻
 		</view>
 		<!-- 弹出框 -->
-		<van-popup class='middle_prop' :show='show' closeable @close="close" :close-on-click-overlay='false'>
+		<van-popup class='middle_prop' :show='show' closeable @close="close" :close-on-click-overlay='false' round>
 			<view class="middle_text">
-				<view class="">
-					已提交入驻申请
+				<view class="prop_top"></view>
+				<view class="prop_content">
+					<view class="">
+						已提交入驻申请
+					</view>
+					<view class="">
+						请等待平台审核
+					</view>
+					<!-- <view class="prop_content"> -->
 				</view>
-				<view class="">
-					请等待平台审核
+				<view class="prop_bottom">
+					
 				</view>
 			</view>
 		</van-popup>
@@ -55,9 +62,8 @@
 	let host = public_data.host
 	export default {
 		data() {
-			
 			return {
-				open_recycle:1,
+				open_recycle:uni.getStorageSync('open_recycle'),
 				aaa: '../../../static/images/sfszm.png',
 				formData: {
 					card_img: []
@@ -96,12 +102,13 @@
 		onLoad(options) {
 			this.open_recycle=options.status
 		},
+		onShow() {
+			this.open_recycle=uni.getStorageSync('open_recycle')
+		},
 		methods: {
 			close() {
 				this.show = false
-				uni.switchTab({
-					url: '../me'
-				})
+				this.open_recycle=2
 			},
 			useinfo(){
 				this.$apis.USERINFO().then((res)=>{
@@ -127,12 +134,13 @@
 					// this.show=true
 					this.$apis.USERINFO().then(res => {
 						uni.setStorageSync('USERINFO', res)
+						uni.setStorageSync('open_recycle',2)
 						// this.open_recycle=res.open_recycle
 						uni.hideLoading()
-						// this.show = true
-						uni.switchTab({
-							url:'../index'
-						})
+						this.show = true
+						// uni.switchTab({
+						// 	url:'../index'
+						// })
 					})
 				}).catch(err => {
 					uni.hideLoading()
@@ -220,7 +228,66 @@
 
 
 	}
+	.middle_prop {
+		.middle_text {
+			width: 90vw;
+			padding: 0;
+			// min-height: 100%;
+			margin: 0;
 
+			>view {
+				text-align: center;
+				display: flex;
+				flex-flow: column nowrap;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.prop_title {
+				height: 112rpx;
+				border-bottom: 1rpx solid #f3f3f3;
+			}
+
+			.prop_content {
+				height: 45%;
+
+				.c_28_888 {
+					max-width: 420rpx;
+					font-weight: 200 !important;
+				}
+
+				>image {
+					width: 300rpx;
+					height: 244rpx;
+				}
+
+				>image,
+				text,
+				view {
+					margin-top: 60rpx;
+				}
+			}
+
+			.prop_bottom {
+				height: 70rpx;
+
+				>view {
+					margin: 60rpx;
+				}
+
+				>.btn_2 {
+					font-weight: 200;
+					padding: 10rpx 60rpx;
+					border-radius: 44rpx;
+				}
+
+				>.btn_squre {
+					border-radius: 10rpx !important;
+				}
+
+			}
+		}
+	}
 	.else {
 		width: 670rpx;
 		// padding: 0 150rpx;
