@@ -109,7 +109,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   if (!_vm._isMounted) {
     _vm.e0 = function($event) {
-      _vm.show = false
+      _vm.loginshow = false
     }
   }
 }
@@ -283,11 +283,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 var _qqmapsdk = _interopRequireDefault(__webpack_require__(/*! ../../common/qqmapsdk.js */ 23));
 var _public_data = __webpack_require__(/*! ../../common/public_data.js */ 13);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}
 
 
+var plugin = requirePlugin('routePlan');
+var key = _public_data.public_data.qqmapKey; //使用在腾讯位置服务申请的key
+var referer = _public_data.public_data.referer; //调用插件的app的名称
 var socketHost = _public_data.public_data.socketHost;var _default =
 {
   data: function data() {
@@ -297,7 +299,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       show: false,
       prop: '位置',
       actions: [{
-        name: '获取用户信息',
+        name: '授权登录',
         color: '#07c160',
         openType: 'getUserInfo' }],
 
@@ -353,45 +355,30 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     };
   },
   onLoad: function onLoad() {var _this2 = this;
+    // this.goLogin(this.loginData)
     this.$apis.INDEX().then(function (res) {
       _this2.routine_name = res.routine_name;
     });
     this.getUserLocation();
-    this.getSetting_info().then(function (res) {
-      console.log(res, 999);
-      _this2.loginshow = !res;
-      if (res) {
-        _this2.goLogin(uni.getStorageSync('LOGIN_DATA'));
-      } else {
-        _this2.loginshow = true;
-      }
-    });
+    if (uni.getStorageSync('TOKEN').length > 0) {
+      this.goLogin(uni.getStorageSync('LOGIN_DATA'));
+    } else {
+      this.loginshow = true;
+    }
   },
-  onShow: function onShow() {var _this3 = this;
-    this.userInfo = uni.getStorageSync('USERINFO');
-    this.connectSocketInit_order();
-    this.getSetting_local().then(function (res) {
-      _this3.show = !res;
-      if (res) {
-        // this.getUserLocation()
-        _this3.connectSocketInit_local();
-        _this3.timer = setInterval(function () {
-          _this3.getUserLocation();
-          _this3.clickRequest_order();
-        }, 10000);
-        // 最新订单列表
-      } else {
-        _this3.prop = '位置';
-      }
-    });
-    this.getList(this.params);
+  onShow: function onShow() {
+    if (uni.getStorageSync('TOKEN').length > 0) {
+      this.userinfo();
+    } else {
+      this.loginshow = true;
+    }
   },
   beforeDestroy: function beforeDestroy() {
     this.closeSocket();
     this.closeSocket_order();
   },
   computed: {
-    hasOrder: function hasOrder() {
+    noOrder: function noOrder() {
       if (this.userInfo.on_line && this.datalist.length > 0) {
         return false;
 
@@ -401,23 +388,25 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     } },
 
   methods: {
-    getlocalset: function getlocalset() {var _this4 = this;
+    getlocalset: function getlocalset() {var _this3 = this;
       this.getSetting_local().then(function (res) {
         if (res) {
-          _this4.getUserLocation();
+          _this3.getUserLocation();
         } else {
-          _this4.show = true;
+          _this3.show = true;
         }
       });
     },
-    getuserSet: function getuserSet() {var _this5 = this;
+    getuserSet: function getuserSet() {var _this4 = this;
       uni.openSetting({
         success: function success(setRes) {
           if (setRes.authSetting['scope.userLocation']) {
+            _this4.show = false;
             uni.showLoading({
               title: '定位中...' });
 
-            _this5.getUserLocation();
+            _this4.getUserLocation();
+            uni.hideLoading();
           }
         } });
 
@@ -456,19 +445,20 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         console.log(e);
       });;
     },
-    getUserLocation: function getUserLocation() {var _this6 = this;
+    getUserLocation: function getUserLocation() {var _this5 = this;
+
       // 地图
       // var that = this;
       _qqmapsdk.default.reverseGeocoder({
         success: function success(res) {
           var a = res.result;
           // console.log(location)
-          _this6.city = a.address_component.city;
-          Object.assign(_this6.location, {
+          _this5.city = a.address_component.city;
+          Object.assign(_this5.location, {
             lat: a.location.lat,
             lng: a.location.lng });
 
-          _this6.clickRequest(a.location.lat, a.location.lng);
+          _this5.clickRequest(a.location.lat, a.location.lng);
         } });
 
     },
@@ -508,11 +498,10 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 
           break;
         case 'map':
-          var plugin = requirePlugin('routePlan');
-          var key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
+          // let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
 
-          //使用在腾讯位置服务申请的key
-          var referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
+          // //使用在腾讯位置服务申请的key
+          // let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
           var endPoint = JSON.stringify({ //终点
             'name': obj.user_address,
             'latitude': obj.user_latitude,
@@ -524,22 +513,22 @@ var socketHost = _public_data.public_data.socketHost;var _default =
           break;}
 
     },
-    deleteOrder: function deleteOrder(id) {var _this7 = this;
+    deleteOrder: function deleteOrder(id) {var _this6 = this;
       uni.showModal({
         content: '确定删除该订单吗?',
         success: function success(res) {
           if (res.confirm) {
-            _this7.$apis.RECYCLE_REMOVE(id).then(function () {
-              _this7.getList(_this7.params);
+            _this6.$apis.RECYCLE_REMOVE(id).then(function () {
+              _this6.getList(_this6.params);
             });
           }
         } });
 
     },
-    sure: function sure(id) {var _this8 = this;
+    sure: function sure(id) {var _this7 = this;
       this.$apis.RECYCLE_SURE(id).then(function () {
-        _this8.params.status = 1;
-        _this8.getList(_this8.params);
+        _this7.params.status = 1;
+        _this7.getList(_this7.params);
       });
     },
     showProp: function showProp(obj) {
@@ -549,32 +538,31 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         id: obj.order_id });
 
     },
-    complate: function complate(data) {var _this9 = this;
+    complate: function complate(data) {var _this8 = this;
       this.$apis.RECYCLE_COMPLATE(data.id, data).then(function (res) {
-        _this9.show = false;
-        _this9.params.status = 2;
-        _this9.getList(_this9.params);
+        _this8.show = false;
+        _this8.params.status = 2;
+        _this8.getList(_this8.params);
       }).catch(function (err) {
         console.log(err, 'err');
-        _this9.prop = '余额';
+        _this8.prop = '余额';
       });
     },
     // 上下线
-    setLine: function setLine(e) {var _this10 = this;
+    setLine: function setLine(e) {var _this9 = this;
       // if (this.userInfo.on_line) {
       uni.showModal({
         content: this.userInfo.on_line ? '关闭后系统将不会为你派发订单' : '开启后系统将为您派发订单',
         success: function success() {
-          _this10.userInfo.on_line = !_this10.userInfo.on_line;
-          _this10.$apis.RECYCLE_LINE(_this10.userInfo.on_line ? 1 : 0).then(function () {
-            _this10.userinfo();
+          _this9.userInfo.on_line = !_this9.userInfo.on_line;
+          _this9.$apis.RECYCLE_LINE(_this9.userInfo.on_line ? 1 : 0).then(function () {
+            _this9.userinfo();
+            //关闭与开启长连接
           });
         } });
 
     },
-    getList: function getList(params) {var _this11 = this;
-      uni.showLoading({});
-
+    getList: function getList(params) {var _this10 = this;
 
       // if()
       this.hasMore = true;
@@ -582,19 +570,19 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         page: 1 });
 
       this.$apis.RECYLE_LIST(params).then(function (res) {
-        _this11.datalist = [];
+        _this10.datalist = [];
         if (res.length < params.limit) {
-          _this11.hasMore = false;
+          _this10.hasMore = false;
         }
         if (params.status == 0) {
-          _this11.InverseAnalysis(res);
+          _this10.InverseAnalysis(res);
         }
         //防止还没计算出结果就一把值赋给datalist
         setTimeout(function () {
-          _this11.datalist = res;
-          _this11.loading = false;
+          _this10.datalist = res;
+          _this10.loading = false;
           uni.hideLoading();
-          console.log(res, _this11.datalist);
+          console.log(res, _this10.datalist);
         }, 500);
         // this.datalist = res
       });
@@ -604,24 +592,30 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         status: type,
         page: 1 });
 
-      if (this.userInfo.on_line) {
-        this.getList(this.params);
+      if (type == 0 && !this.userInfo.on_line) {
+        return;
       }
+      uni.showLoading({});
+
+
+      // if (this.userInfo.on_line) {
+      this.getList(this.params);
+      // }
     },
-    loadMore: function loadMore(params) {var _this12 = this;
+    loadMore: function loadMore(params) {var _this11 = this;
       this.$apis.RECYLE_LIST(params).then(function (res) {
         res.forEach(function (item) {
           item.juli = 100;
         });
         if (res.length < params.limit) {
-          _this12.hasMore = false;
+          _this11.hasMore = false;
         }
         if (params.status == 0) {
-          _this12.InverseAnalysis(res);
+          _this11.InverseAnalysis(res);
         }
         //防止还没计算出结果就一把值赋给datalist
         setTimeout(function () {
-          _this12.datalist = _this12.datalist.concat(res);
+          _this11.datalist = _this11.datalist.concat(res);
           uni.hideLoading();
         }, 500);
       });
@@ -630,7 +624,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       this.show = false;
     },
     //微信授权登录
-    getUserInfo: function getUserInfo(e) {var _this13 = this;
+    getUserInfo: function getUserInfo(e) {var _this12 = this;
       var p = this.getSetting_info();
       p.then(function (isAuth) {
         console.log('是否已经授权', isAuth);
@@ -639,12 +633,14 @@ var socketHost = _public_data.public_data.socketHost;var _default =
             title: '登录中...' });
 
           var res = e.detail;
-          Object.assign(_this13.loginData, {
+          Object.assign(_this12.loginData, {
             iv: res.iv,
-            encryptedData: res.encryptedData });
+            encryptedData: res.encryptedData,
+            'catch_key': '' });
 
-          _this13.goLogin(_this13.loginData);
+          _this12.goLogin(_this12.loginData);
         } else {
+          // this.loginshow=true
           uni.showToast({
             title: '授权失败，请确认授权已开启',
             mask: true,
@@ -653,50 +649,85 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         }
       });
     },
-    goLogin: function goLogin(data) {var _this14 = this;
-      uni.login({
-        provider: 'weixin',
-        success: function success(res) {
-          Object.assign(data, {
-            jsCode: res.code });
+    goLogin: function goLogin(data) {var _this13 = this;
+      var p = this.getSetting_info();
+      p.then(function (res) {
+        if (res) {
+          uni.login({
+            provider: 'weixin',
+            success: function success(res) {
+              Object.assign(data, {
+                jsCode: res.code });
 
-          _this14.$apis.LOGIN(data).then(function (res) {
-            // console.log(res, '登录')
-            if (res.cache_key !== '') {
-              Object.assign(_this14.loginData, {
-                cache_key: res.cache_key });
+              _this13.$apis.LOGIN(data).then(function (res) {
+                // console.log(res, '登录')
+                if (res.cache_key !== '') {
+                  Object.assign(_this13.loginData, {
+                    cache_key: res.cache_key });
 
-            }
-            uni.setStorageSync('TOKEN', res.token);
-            uni.setStorageSync('LOGIN_DATA', _this14.loginData);
-            _this14.loginshow = false;
-            // this.setLocation(this.localData)
-            _this14.userinfo();
-            uni.hideLoading();
-          }).catch(function (error) {
-            uni.hideLoading();
-            _this14.loginshow = true;
-            uni.showModal({
-              content: error.msg + ',点击重试',
-              showCancel: false,
-              success: function success(res) {
-                if (res.confirm) {
-                  _this14.goLogin();
                 }
-              } });
+                uni.setStorageSync('TOKEN', res.token);
+                uni.setStorageSync('LOGIN_DATA', _this13.loginData);
+                _this13.loginshow = false;
+                // this.setLocation(this.localData)
+                _this13.userinfo();
+                getApp().globalData.hasLogin = true;
+                uni.hideLoading();
+              }).catch(function (error) {
+                uni.hideLoading();
+                _this13.loginshow = true;
+                uni.showModal({
+                  content: error.msg + ',点击重试',
+                  showCancel: false,
+                  success: function success(res) {
+                    if (res.confirm) {
+                      _this13.goLogin();
+                    }
+                  } });
 
-            // console.log(error, this.loginshow)
-          });
-        } });
+                // console.log(error, this.loginshow)
+              });
+            } });
+
+        } else {
+          _this13.loginshow = true;
+        }
+      });
 
     },
-    userinfo: function userinfo() {var _this15 = this;
+    userinfo: function userinfo() {var _this14 = this;
       this.$apis.USERINFO().then(function (res) {
+        if (res.on_line == 0) {
+          _this14.closeSocket();
+          _this14.closeSocket_order();
+          if (_this14.timer) {
+            clearInterval(_this14.timer);
+            _this14.timer = null;
+          }
+        } else {
+          // this.connectSocketInit_local()
+          _this14.connectSocketInit_order();
+          _this14.getSetting_local().then(function (res) {
+            // this.show = !res
+            if (res) {
+              // this.getUserLocation()
+              _this14.connectSocketInit_local();
+              _this14.timer = setInterval(function () {
+                _this14.getUserLocation();
+                _this14.clickRequest_order();
+              }, 5000);
+              // 最新订单列表
+            } else {
+              _this14.prop = '位置';
+            }
+          });
+          _this14.getList(_this14.params);
+        }
         res.on_line = res.on_line == 1 ? true : false;
         // this.InverseAnalysis(res.latitude, res.longitude)
-
         uni.setStorageSync('USERINFO', res);
-        _this15.userInfo = res;
+        _this14.userInfo = res;
+
       });
     },
     //获取用户的当前设置
@@ -720,7 +751,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     // 长连接
     // 进入这个页面的时候创建websocket连接【整个页面随时使用】
     // 定位
-    connectSocketInit_local: function connectSocketInit_local() {var _this16 = this;
+    connectSocketInit_local: function connectSocketInit_local() {var _this15 = this;
       // 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
       this.socketTask = uni.connectSocket({
         // 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
@@ -731,21 +762,21 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 
       // 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
       this.socketTask.onOpen(function (res) {
-        console.log("定位连接正常打开中...！");
-        _this16.is_open_socket = true;
+        // console.log("定位连接正常打开中...！");
+        _this15.is_open_socket = true;
         // 注：只有连接正常打开中 ，才能正常成功发送消息
-        _this16.socketTask.send({
-          data: 'type=2&id=' + _this16.userInfo.id + '&latitude=' + _this16.location.lat + '&longitude=' + _this16.location.lng,
+        _this15.socketTask.send({
+          data: 'type=2&id=' + _this15.userInfo.id + '&latitude=' + _this15.location.lat + '&longitude=' + _this15.location.lng,
           success: function success() {
             // console.log("消息发送成功!");
             return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:case "end":return _context.stop();}}}, _callee);}))();} });
 
         // 注：只有连接正常打开中 ，才能正常收到消息
-        _this16.socketTask.onMessage(function (res) {
+        _this15.socketTask.onMessage(function (res) {
           if (res.data !== '') {
             var obj = JSON.parse(res.data);
           }
-          console.log(res.data, '定位结果');
+          // console.log(res.data, '定位结果')
         });
       });
       // 这里仅是事件监听【如果socket关闭了会执行】
@@ -758,10 +789,10 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       this.socketTask.close({
         success: function success(res) {
           this.is_open_socket = false;
-          console.log("定位关闭成功", res);
+          // console.log("定位关闭成功", res)
         },
         fail: function fail(err) {
-          console.log("定位关闭失败", err);
+          // console.log("定位关闭失败", err)
         } });
 
     },
@@ -770,14 +801,14 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         // websocket的服务器的原理是:发送一次消息,同时返回一组数据【否则服务器会进去死循环崩溃】
         this.socketTask.send({
           data: 'type=2&id=' + this.userInfo.id + '&latitude=' + lat + '&longitude=' + lng,
-          success: function success() {return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:
-                      console.log("定位消息发送成功");case 1:case "end":return _context2.stop();}}}, _callee2);}))();
-          } });
+          success: function success() {
+            // console.log("定位消息发送成功");
+            return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:case "end":return _context2.stop();}}}, _callee2);}))();} });
 
       }
     },
     // 新订单
-    connectSocketInit_order: function connectSocketInit_order() {var _this17 = this;
+    connectSocketInit_order: function connectSocketInit_order() {var _this16 = this;
       // 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
       this.socketTask_order = uni.connectSocket({
         // 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
@@ -788,20 +819,36 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 
       // 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
       this.socketTask_order.onOpen(function (res) {
-        console.log("订单连接正常打开中...！");
-        _this17.is_open_socket_order = true;
+        // console.log("订单连接正常打开中...！");
+        _this16.is_open_socket_order = true;
         // 注：只有连接正常打开中 ，才能正常成功发送消息
-        _this17.socketTask_order.send({
-          data: 'type=3&id=' + _this17.userInfo.id,
+        _this16.socketTask_order.send({
+          data: 'type=3&id=' + _this16.userInfo.id,
           success: function success() {return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee3() {return _regenerator.default.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:
-                      console.log("111订单消息发送成功!");case 1:case "end":return _context3.stop();}}}, _callee3);}))();
+                      console.log("订单消息发送成功!");case 1:case "end":return _context3.stop();}}}, _callee3);}))();
           } });
 
         // 注：只有连接正常打开中 ，才能正常收到消息
-        _this17.socketTask_order.onMessage(function (res) {
+        _this16.socketTask_order.onMessage(function (res) {
           if (res.data !== '') {
-            var obj = JSON.parse(res.data);
-            console.log(res.data, '订单结果');
+            uni.showModal({
+              content: '接到系统派发订单',
+              cancelText: '稍后',
+              confirmText: '立即查看',
+              success: function success(res) {
+                if (res.confirm) {
+                  // let obj = JSON.parse(res.data)
+                  console.log(res.data, '订单结果');
+                  Object.assign(_this16.params, {
+                    page: 1,
+                    status: 0 });
+
+                  _this16.getList(_this16.params);
+                }
+              } });
+
+
+
           }
         });
       });
@@ -842,11 +889,28 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       clearInterval(this.timer);
       this.timer = null;
     }
-    console.log('hide222', this.timer);
+    // console.log('hide222', this.timer)
+  },
+  onUnload: function onUnload() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
   },
   onPullDownRefresh: function onPullDownRefresh() {
     this.loading = true;
-    this.getList(this.params);
+    // this.connectSocketInit_order()
+    // this.getSetting_local().then(res => {
+    // 	this.show = !res
+    // 	if (res) {
+    // 		this.connectSocketInit_local()
+    // 		// 最新订单列表
+    // 	} else {
+    // 		this.prop = '位置'
+    // 	}
+    // })
+    // this.getList(this.params)
+    this.userinfo();
     setTimeout(function () {
       uni.stopPullDownRefresh();
     }, 1000);

@@ -1,5 +1,8 @@
 <script>
 	export default {
+		globalData:{
+			hasLogin:false
+		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},
@@ -15,7 +18,33 @@
 <style lang="scss">
 	/*每个页面公共css */
 	@import "./common/iconfont.css";
+	// 列表无数据
+	.nodata {
+		width: 547rpx;
+		margin: 0 auto;
+		margin-top: 20vh;
+		text-align: center;
+		background: transparent !important;
+		>image,
+		text,
+		view {
+			display: block;
+		}
+		>image {
+			width: 547rpx;
+			height: 342rpx;
 
+			+text {
+				color: #ccc;
+				+view {
+					width: 318rpx;
+					margin: 0 auto;
+					margin-top: 100rpx;
+				}
+
+			}
+		}
+	}
 	.pro_title {
 		color: #323232;
 		font-size: 32rpx;

@@ -48,6 +48,9 @@
   position: relative;
   top: 10rpx;
 }
+.container > .top .flex_between > view:last-child {
+  margin-top: 12rpx;
+}
 .container > .top > .tabbar {
   width: 100%;
   background: #2E8EF4;

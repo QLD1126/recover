@@ -1,8 +1,8 @@
 <template>
 	<view class="container">
-		<image src="../../static/bgjb.png" class="bg" mode="" ></image>
+		<image src="../../static/bgjb.png" class="bg" mode=""></image>
 		<view class="">
-			<view class="top">
+			<view class="top" :style="userInfo.open_pay==1?'':'height: 215rpx;'">
 				<view class="flex_between">
 					<view class="">
 						<image @click="lookPic(userInfo.avatar)" :src="userInfo.avatar" mode=""></image>
@@ -14,9 +14,9 @@
 					</view>
 				</view>
 				<!-- 我的环保币 -->
-				<view class="box_702 flex_between">
+				<view class="box_702 flex_between" v-if="userInfo.open_pay==1">
 					<view class="" @click="toPage('rechange')">
-						<text>我的环保币:{{userInfo.integral}}</text>
+						<text>我的环保币:{{userInfo.integral||0}}</text>
 						<view class="">
 							充值
 						</view>
@@ -32,7 +32,7 @@
 			<!-- 主体 -->
 			<view class="main">
 				<view class="ul_list">
-					<view class="" v-for="(item,index) in ulArr" :key='index' @click="toPage('page',item.url)">
+					<view class="" v-for="(item,index) in ulArr" :key='index' @click="toPage('page',item.url)" :style="userInfo.open_pay==1?'':'margin-top:2vh'">
 						<view class="">
 							<!-- <image src="" mode=""></image> -->
 							<image class="icon_44" :src="item.img" mode=""></image>
@@ -68,9 +68,9 @@
 					uni.setStorageSync('USERINFO', res)
 				})
 			},
-			lookPic(url){
+			lookPic(url) {
 				uni.previewImage({
-					urls:url
+					urls: url
 				})
 			},
 			toPage(type, url) {
@@ -115,6 +115,12 @@
 						break;
 				}
 			},
+		},
+		onPullDownRefresh() {
+			setTimeout(()=>{
+				this.getUserinfo()
+				uni.stopPullDownRefresh()
+			},1000)
 		}
 	}
 </script>

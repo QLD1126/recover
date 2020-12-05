@@ -27,7 +27,7 @@
 		<!-- <view class="" @click="a">
 			sfdsudhfuifd
 		</view> -->
-		<view class="nodata" v-if="hasOrder">
+		<view class="nodata" v-if="noOrder">
 			<image src="../../static/zwdd.png" mode=""></image>
 			<text class="c_28_888">暂时没有订单</text>
 		</view>
@@ -133,17 +133,19 @@
 			</view>
 		</van-popup>
 		<!-- 登录 -->
-		<van-action-sheet :show="loginshow" :actions="actions" @close="show=false" @getuserinfo="getUserInfo" />
+		<van-action-sheet :show="loginshow" :actions="actions" @close="loginshow=false" @getuserinfo="getUserInfo" />
 	</view>
 </template>
 
 <script>
-	// import this.$apis from '../../common/this.$apis/this.$apis.js'
 	import qqmapsdk from '../../common/qqmapsdk.js'
 	import {
 		public_data
 	} from '../../common/public_data.js'
-	let socketHost = public_data.socketHost
+	let plugin = requirePlugin('routePlan');
+	const key = public_data.qqmapKey; //使用在腾讯位置服务申请的key
+	const referer = public_data.referer; //调用插件的app的名称
+	const socketHost = public_data.socketHost
 	export default {
 		data() {
 			return {
@@ -152,7 +154,7 @@
 				show: false,
 				prop: '位置',
 				actions: [{
-					name: '获取用户信息',
+					name: '授权登录',
 					color: '#07c160',
 					openType: 'getUserInfo'
 				}],
@@ -208,45 +210,30 @@
 			}
 		},
 		onLoad() {
+			// this.goLogin(this.loginData)
 			this.$apis.INDEX().then(res => {
-				this.routine_name=res.routine_name
+				this.routine_name = res.routine_name
 			})
 			this.getUserLocation()
-			this.getSetting_info().then(res => {
-				console.log(res, 999)
-				this.loginshow = !res
-				if (res) {
-					this.goLogin(uni.getStorageSync('LOGIN_DATA'))
-				} else {
-					this.loginshow = true
-				}
-			})
+			if (uni.getStorageSync('TOKEN').length > 0) {
+				this.goLogin(uni.getStorageSync('LOGIN_DATA'))
+			} else {
+				this.loginshow = true
+			}
 		},
 		onShow() {
-			this.userInfo = uni.getStorageSync('USERINFO')
-			this.connectSocketInit_order()
-			this.getSetting_local().then(res => {
-				this.show = !res
-				if (res) {
-					// this.getUserLocation()
-					this.connectSocketInit_local()
-					this.timer = setInterval(() => {
-						this.getUserLocation()
-						this.clickRequest_order()
-					}, 10000)
-					// 最新订单列表
-				} else {
-					this.prop = '位置'
-				}
-			})
-			this.getList(this.params)
+			if (uni.getStorageSync('TOKEN').length > 0) {
+				this.userinfo()
+			}else{
+				this.loginshow=true
+			}
 		},
 		beforeDestroy() {
 			this.closeSocket();
 			this.closeSocket_order()
 		},
 		computed: {
-			hasOrder() {
+			noOrder() {
 				if (this.userInfo.on_line && this.datalist.length > 0) {
 					return false
 
@@ -256,12 +243,12 @@
 			}
 		},
 		methods: {
-			getlocalset(){
-				this.getSetting_local().then(res=>{
-					if(res){
+			getlocalset() {
+				this.getSetting_local().then(res => {
+					if (res) {
 						this.getUserLocation()
-					}else{
-						this.show=true
+					} else {
+						this.show = true
 					}
 				})
 			},
@@ -269,10 +256,12 @@
 				uni.openSetting({
 					success: (setRes) => {
 						if (setRes.authSetting['scope.userLocation']) {
+							this.show = false
 							uni.showLoading({
 								title: '定位中...'
 							})
 							this.getUserLocation()
+							uni.hideLoading()
 						}
 					}
 				})
@@ -312,6 +301,7 @@
 				});;
 			},
 			getUserLocation() {
+
 				// 地图
 				// var that = this;
 				qqmapsdk.reverseGeocoder({
@@ -363,11 +353,10 @@
 						})
 						break;
 					case 'map':
-						let plugin = requirePlugin('routePlan');
-						let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
+						// let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
 
-						//使用在腾讯位置服务申请的key
-						let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
+						// //使用在腾讯位置服务申请的key
+						// let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
 						let endPoint = JSON.stringify({ //终点
 							'name': obj.user_address,
 							'latitude': obj.user_latitude,
@@ -423,14 +412,13 @@
 						this.userInfo.on_line = !this.userInfo.on_line
 						this.$apis.RECYCLE_LINE(this.userInfo.on_line ? 1 : 0).then(() => {
 							this.userinfo()
+							//关闭与开启长连接
 						})
 					}
 				})
 			},
 			getList(params) {
-				uni.showLoading({
 
-				})
 				// if()
 				this.hasMore = true
 				Object.assign(params, {
@@ -459,9 +447,15 @@
 					status: type,
 					page: 1,
 				})
-				if (this.userInfo.on_line) {
-					this.getList(this.params)
+				if (type == 0 && !this.userInfo.on_line) {
+					return
 				}
+				uni.showLoading({
+
+				})
+				// if (this.userInfo.on_line) {
+				this.getList(this.params)
+				// }
 			},
 			loadMore(params) {
 				this.$apis.RECYLE_LIST(params).then(res => {
@@ -496,10 +490,12 @@
 						let res = e.detail
 						Object.assign(this.loginData, {
 							iv: res.iv,
-							encryptedData: res.encryptedData
+							encryptedData: res.encryptedData,
+							'catch_key': ''
 						})
 						this.goLogin(this.loginData)
 					} else {
+						// this.loginshow=true
 						uni.showToast({
 							title: '授权失败，请确认授权已开启',
 							mask: true,
@@ -509,49 +505,84 @@
 				});
 			},
 			goLogin(data) {
-				uni.login({
-					provider: 'weixin',
-					success: (res) => {
-						Object.assign(data, {
-							jsCode: res.code,
-						})
-						this.$apis.LOGIN(data).then((res) => {
-							// console.log(res, '登录')
-							if (res.cache_key !== '') {
-								Object.assign(this.loginData, {
-									cache_key: res.cache_key
+				let p = this.getSetting_info()
+				p.then(res => {
+					if (res) {
+						uni.login({
+							provider: 'weixin',
+							success: (res) => {
+								Object.assign(data, {
+									jsCode: res.code,
+								})
+								this.$apis.LOGIN(data).then((res) => {
+									// console.log(res, '登录')
+									if (res.cache_key !== '') {
+										Object.assign(this.loginData, {
+											cache_key: res.cache_key
+										})
+									}
+									uni.setStorageSync('TOKEN', res.token)
+									uni.setStorageSync('LOGIN_DATA', this.loginData)
+									this.loginshow = false
+									// this.setLocation(this.localData)
+									this.userinfo()
+									getApp().globalData.hasLogin = true
+									uni.hideLoading()
+								}).catch((error) => {
+									uni.hideLoading()
+									this.loginshow = true
+									uni.showModal({
+										content: error.msg + ',点击重试',
+										showCancel: false,
+										success: (res) => {
+											if (res.confirm) {
+												this.goLogin()
+											}
+										}
+									})
+									// console.log(error, this.loginshow)
 								})
 							}
-							uni.setStorageSync('TOKEN', res.token)
-							uni.setStorageSync('LOGIN_DATA', this.loginData)
-							this.loginshow = false
-							// this.setLocation(this.localData)
-							this.userinfo()
-							uni.hideLoading()
-						}).catch((error) => {
-							uni.hideLoading()
-							this.loginshow = true
-							uni.showModal({
-								content: error.msg + ',点击重试',
-								showCancel: false,
-								success: (res) => {
-									if (res.confirm) {
-										this.goLogin()
-									}
-								}
-							})
-							// console.log(error, this.loginshow)
-						})
+						});
+					} else {
+						this.loginshow = true
 					}
-				});
+				})
+
 			},
 			userinfo() {
 				this.$apis.USERINFO().then(res => {
+					if (res.on_line == 0) {
+						this.closeSocket()
+						this.closeSocket_order()
+						if (this.timer) {
+							clearInterval(this.timer)
+							this.timer = null
+						}
+					} else {
+						// this.connectSocketInit_local()
+						this.connectSocketInit_order()
+						this.getSetting_local().then(res => {
+							// this.show = !res
+							if (res) {
+								// this.getUserLocation()
+								this.connectSocketInit_local()
+								this.timer = setInterval(() => {
+									this.getUserLocation()
+									this.clickRequest_order()
+								}, 5000)
+								// 最新订单列表
+							} else {
+								this.prop = '位置'
+							}
+						})
+						this.getList(this.params)
+					}
 					res.on_line = res.on_line == 1 ? true : false
 					// this.InverseAnalysis(res.latitude, res.longitude)
-
 					uni.setStorageSync('USERINFO', res)
 					this.userInfo = res
+
 				})
 			},
 			//获取用户的当前设置
@@ -586,7 +617,7 @@
 				});
 				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
 				this.socketTask.onOpen((res) => {
-					console.log("定位连接正常打开中...！");
+					// console.log("定位连接正常打开中...！");
 					this.is_open_socket = true;
 					// 注：只有连接正常打开中 ，才能正常成功发送消息
 					this.socketTask.send({
@@ -600,7 +631,7 @@
 						if (res.data !== '') {
 							let obj = JSON.parse(res.data)
 						}
-						console.log(res.data, '定位结果')
+						// console.log(res.data, '定位结果')
 					});
 				})
 				// 这里仅是事件监听【如果socket关闭了会执行】
@@ -613,10 +644,10 @@
 				this.socketTask.close({
 					success(res) {
 						this.is_open_socket = false;
-						console.log("定位关闭成功", res)
+						// console.log("定位关闭成功", res)
 					},
 					fail(err) {
-						console.log("定位关闭失败", err)
+						// console.log("定位关闭失败", err)
 					}
 				})
 			},
@@ -626,7 +657,7 @@
 					this.socketTask.send({
 						data: 'type=2&id=' + this.userInfo.id + '&latitude=' + lat + '&longitude=' + lng,
 						async success() {
-							console.log("定位消息发送成功");
+							// console.log("定位消息发送成功");
 						},
 					});
 				}
@@ -643,20 +674,36 @@
 				});
 				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
 				this.socketTask_order.onOpen((res) => {
-					console.log("订单连接正常打开中...！");
+					// console.log("订单连接正常打开中...！");
 					this.is_open_socket_order = true;
 					// 注：只有连接正常打开中 ，才能正常成功发送消息
 					this.socketTask_order.send({
 						data: 'type=3&id=' + this.userInfo.id,
 						async success() {
-							console.log("111订单消息发送成功!");
+							console.log("订单消息发送成功!");
 						},
 					});
 					// 注：只有连接正常打开中 ，才能正常收到消息
 					this.socketTask_order.onMessage((res) => {
 						if (res.data !== '') {
-							let obj = JSON.parse(res.data)
-							console.log(res.data, '订单结果')
+							uni.showModal({
+								content: '接到系统派发订单',
+								cancelText: '稍后',
+								confirmText: '立即查看',
+								success: (res) => {
+									if (res.confirm) {
+										// let obj = JSON.parse(res.data)
+										console.log(res.data, '订单结果')
+										Object.assign(this.params, {
+											page: 1,
+											status: 0
+										})
+										this.getList(this.params)
+									}
+								}
+
+							})
+
 						}
 					});
 				})
@@ -697,11 +744,28 @@
 				clearInterval(this.timer)
 				this.timer = null
 			}
-			console.log('hide222', this.timer)
+			// console.log('hide222', this.timer)
+		},
+		onUnload() {
+			if (this.timer) {
+				clearInterval(this.timer)
+				this.timer = null
+			}
 		},
 		onPullDownRefresh() {
 			this.loading = true
-			this.getList(this.params)
+			// this.connectSocketInit_order()
+			// this.getSetting_local().then(res => {
+			// 	this.show = !res
+			// 	if (res) {
+			// 		this.connectSocketInit_local()
+			// 		// 最新订单列表
+			// 	} else {
+			// 		this.prop = '位置'
+			// 	}
+			// })
+			// this.getList(this.params)
+			this.userinfo()
 			setTimeout(() => {
 				uni.stopPullDownRefresh();
 			}, 1000);
@@ -751,6 +815,10 @@
 					height: 44rpx;
 					position: relative;
 					top: 10rpx;
+				}
+
+				>view:last-child {
+					margin-top: 12rpx;
 				}
 			}
 

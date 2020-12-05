@@ -1,9 +1,9 @@
 <template>
-	<view class="container">
-		<view class="nodata" v-if="datalist.length==0">
-			<image src="../../../static/zwdd.png" mode=""></image>
-			<text class="c_28_888">暂时没有订单</text>
-		</view>
+	<view class="nodata" v-if="datalist.length==0">
+		<image src="../../../static/zwdd.png" mode=""></image>
+		<text class="c_28_888">暂时没有订单</text>
+	</view>
+	<view class="container" v-else>
 		<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 			<view class="flex_between">
 				<text>订单编号：{{item.order_id}}</text>
@@ -34,7 +34,7 @@
 				</view>
 			</view>
 			<view class="" v-if="item.status==1">
-				<view class="btn btn_bule"  @click="showProp(item)">
+				<view class="btn btn_bule" @click="showProp(item)">
 					确认回收
 				</view>
 			</view>
@@ -63,11 +63,11 @@
 				<view class="prop_content">
 					<view class="" style="margin-top: 150rpx;">
 						<view class="hasinput">
-							
-						<text class="putongtext hsz">请输入回收值：</text><input type="number" v-model="formdata.integral"/>
+
+							<text class="putongtext hsz">请输入回收值：</text><input type="number" v-model="formdata.integral" />
 						</view>
 						<view class="hasinput" style="margin-top: 60rpx;">
-						<text class="putongtext hsz" >请输入回收重量(kg)：</text><input type="number" v-model="formdata.weight" />
+							<text class="putongtext hsz">请输入回收重量(kg)：</text><input type="number" v-model="formdata.weight" />
 						</view>
 					</view>
 				</view>
@@ -91,43 +91,43 @@
 					status: '1,2,-1',
 				},
 				formdata: {
-					integral:'',
-					weight:'',
+					integral: '',
+					weight: '',
 				},
 				hasMore: true,
 				datalist: [],
 				loginshow: false,
 				show: false,
-				prop:''
+				prop: ''
 			};
 		},
 		onLoad() {
 			this.getList(this.params)
 		},
 		methods: {
-			toPage(type,obj){
-					switch (type) {
-						case 'rechange':
-							uni.navigateTo({
-								url: '../rechange/rechange'
-							})
-							break;
-						case 'map':
-							let plugin = requirePlugin('routePlan');
-							let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
-				
-							//使用在腾讯位置服务申请的key
-							let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
-							let endPoint = JSON.stringify({ //终点
-								'name': obj.user_address,
-								'latitude': obj.user_latitude,
-								'longitude': obj.user_longitude
-							});
-							uni.navigateTo({
-								url: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint + '&navigation=1'
-							})
-							break;
-					}
+			toPage(type, obj) {
+				switch (type) {
+					case 'rechange':
+						uni.navigateTo({
+							url: '../rechange/rechange'
+						})
+						break;
+					case 'map':
+						let plugin = requirePlugin('routePlan');
+						let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
+
+						//使用在腾讯位置服务申请的key
+						let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
+						let endPoint = JSON.stringify({ //终点
+							'name': obj.user_address,
+							'latitude': obj.user_latitude,
+							'longitude': obj.user_longitude
+						});
+						uni.navigateTo({
+							url: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint + '&navigation=1'
+						})
+						break;
+				}
 			},
 			showProp(obj) {
 				this.show = true
@@ -186,7 +186,7 @@
 				// console.log(this.params, 11)
 				this.loadMore(this.params)
 			} else {
-				if(this.datalist.length==0){
+				if (this.datalist.length == 0) {
 					return
 				}
 				uni.showToast({
@@ -199,23 +199,27 @@
 </script>
 
 <style lang="scss">
-	.container{
-		    height: 98.1vh;
+	.container {
+		// height: 98.1vh;
+		height: 100%;
 	}
-.model_jiedan {
-	margin-top: 0;
-	.flex_between {
-		+ view{
-			padding: 0;
-			border-bottom: none;
-			>view{
-				margin-top:40rpx;
+
+	.model_jiedan {
+		margin-top: 0;
+
+		.flex_between {
+			+view {
+				padding: 0;
+				border-bottom: none;
+
+				>view {
+					margin-top: 40rpx;
+				}
 			}
 		}
-	}
-	>view:last-child{
-		border-top: 1rpx solid #f3f3f3;
-	}
-}
 
+		>view:last-child {
+			border-top: 1rpx solid #f3f3f3;
+		}
+	}
 </style>

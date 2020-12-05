@@ -1,9 +1,9 @@
 <template>
-	<view class="container">
-		<view class="nodata" v-if="datalist.length==0">
-			<image src="../../../static/zwdd.png" mode=""></image>
-			<text class="c_28_888">暂无交易记录</text>
-		</view>
+	<view class="nodata" v-if="datalist.length==0">
+		<image src="../../../static/zwdd.png" mode=""></image>
+		<text class="c_28_888">暂无交易记录</text>
+	</view>
+	<view class="container" v-else>
 		<view class="flex_between" v-for="item in datalist" :key='item.id'>
 			<view class="">
 				<view class="a">
@@ -90,7 +90,7 @@
 
 <style lang="scss">
 	.container {
-		padding-top: 20rpx;
+		padding-top: 1rpx;
 	}
 
 	.flex_between {

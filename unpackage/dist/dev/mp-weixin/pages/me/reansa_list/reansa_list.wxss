@@ -25,7 +25,7 @@
 /* 透明度 */
 /* 文章场景相关 */
 .container {
-  padding-top: 20rpx;
+  padding-top: 1rpx;
 }
 .flex_between {
   margin: 20rpx 0;

@@ -246,7 +246,14 @@ var _default =
 
           break;}
 
-    } } };exports.default = _default;
+    } },
+
+  onPullDownRefresh: function onPullDownRefresh() {var _this2 = this;
+    setTimeout(function () {
+      _this2.getUserinfo();
+      uni.stopPullDownRefresh();
+    }, 1000);
+  } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
