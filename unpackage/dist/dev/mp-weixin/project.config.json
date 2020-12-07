@@ -25,8 +25,9 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/me/recive_order/recive_order",
-          "pathName": "pages/me/recive_order/recive_order",
+          "name": "pages/index/recover_add/recover_add",
+          "pathName": "pages/index/recover_add/recover_add",
+          "query": "",
           "scene": null
         }
       ]

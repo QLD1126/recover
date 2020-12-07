@@ -264,15 +264,13 @@ var host = _public_data.public_data.host;var _default = { data: function data() 
       Object.assign(this.formData, FormData);
       this.$apis.RECYCLE_USER(this.formData).then(function (res) {
         // this.show=true
+        console.log(_this2.formData, 2222);
         _this2.$apis.USERINFO().then(function (res) {
           uni.setStorageSync('USERINFO', res);
           uni.setStorageSync('open_recycle', 2);
           // this.open_recycle=res.open_recycle
           uni.hideLoading();
           _this2.show = true;
-          // uni.switchTab({
-          // 	url:'../index'
-          // })
         });
       }).catch(function (err) {
         uni.hideLoading();

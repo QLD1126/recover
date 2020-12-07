@@ -224,8 +224,8 @@
 		onShow() {
 			if (uni.getStorageSync('TOKEN').length > 0) {
 				this.userinfo()
-			}else{
-				this.loginshow=true
+			} else {
+				this.loginshow = true
 			}
 		},
 		beforeDestroy() {
@@ -408,12 +408,14 @@
 				// if (this.userInfo.on_line) {
 				uni.showModal({
 					content: this.userInfo.on_line ? '关闭后系统将不会为你派发订单' : '开启后系统将为您派发订单',
-					success: () => {
-						this.userInfo.on_line = !this.userInfo.on_line
-						this.$apis.RECYCLE_LINE(this.userInfo.on_line ? 1 : 0).then(() => {
-							this.userinfo()
-							//关闭与开启长连接
-						})
+					success: (res) => {
+						// 确认关闭
+						if (res.confirm) {
+							this.userInfo.on_line = !this.userInfo.on_line
+							this.$apis.RECYCLE_LINE(this.userInfo.on_line ? 1 : 0).then(() => {
+								this.userinfo()
+							})
+						}
 					}
 				})
 			},
@@ -552,13 +554,14 @@
 			},
 			userinfo() {
 				this.$apis.USERINFO().then(res => {
-					if (res.on_line == 0) {
+					if (res.on_line == 0 || !res.on_line) {
 						this.closeSocket()
 						this.closeSocket_order()
 						if (this.timer) {
 							clearInterval(this.timer)
 							this.timer = null
 						}
+						console.log('下线',this.timer)
 					} else {
 						// this.connectSocketInit_local()
 						this.connectSocketInit_order()
@@ -577,6 +580,7 @@
 							}
 						})
 						this.getList(this.params)
+						console.log('上线')
 					}
 					res.on_line = res.on_line == 1 ? true : false
 					// this.InverseAnalysis(res.latitude, res.longitude)

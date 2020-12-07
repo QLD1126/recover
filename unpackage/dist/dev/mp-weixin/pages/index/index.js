@@ -553,12 +553,14 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       // if (this.userInfo.on_line) {
       uni.showModal({
         content: this.userInfo.on_line ? '关闭后系统将不会为你派发订单' : '开启后系统将为您派发订单',
-        success: function success() {
-          _this9.userInfo.on_line = !_this9.userInfo.on_line;
-          _this9.$apis.RECYCLE_LINE(_this9.userInfo.on_line ? 1 : 0).then(function () {
-            _this9.userinfo();
-            //关闭与开启长连接
-          });
+        success: function success(res) {
+          // 确认关闭
+          if (res.confirm) {
+            _this9.userInfo.on_line = !_this9.userInfo.on_line;
+            _this9.$apis.RECYCLE_LINE(_this9.userInfo.on_line ? 1 : 0).then(function () {
+              _this9.userinfo();
+            });
+          }
         } });
 
     },
@@ -697,13 +699,14 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     },
     userinfo: function userinfo() {var _this14 = this;
       this.$apis.USERINFO().then(function (res) {
-        if (res.on_line == 0) {
+        if (res.on_line == 0 || !res.on_line) {
           _this14.closeSocket();
           _this14.closeSocket_order();
           if (_this14.timer) {
             clearInterval(_this14.timer);
             _this14.timer = null;
           }
+          console.log('下线', _this14.timer);
         } else {
           // this.connectSocketInit_local()
           _this14.connectSocketInit_order();
@@ -722,6 +725,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
             }
           });
           _this14.getList(_this14.params);
+          console.log('上线');
         }
         res.on_line = res.on_line == 1 ? true : false;
         // this.InverseAnalysis(res.latitude, res.longitude)

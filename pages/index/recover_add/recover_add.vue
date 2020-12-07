@@ -132,15 +132,13 @@
 				Object.assign(this.formData, FormData)
 				this.$apis.RECYCLE_USER(this.formData).then(res => {
 					// this.show=true
+					console.log(this.formData,2222)
 					this.$apis.USERINFO().then(res => {
 						uni.setStorageSync('USERINFO', res)
 						uni.setStorageSync('open_recycle',2)
 						// this.open_recycle=res.open_recycle
 						uni.hideLoading()
 						this.show = true
-						// uni.switchTab({
-						// 	url:'../index'
-						// })
 					})
 				}).catch(err => {
 					uni.hideLoading()
