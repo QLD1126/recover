@@ -61,7 +61,7 @@
 						详细地址：{{item.user_address}}
 					</view>
 					<view class="" v-if="params.status==0">
-						距离：{{item.distance}}m
+						距离：{{item.distance||0}}m
 					</view>
 				</view>
 				<view class="">
@@ -339,8 +339,13 @@
 							item.distance = res.result.elements[0].distance;
 						},
 						fail: function(error) {
+							// uni.show
 							// console.error(error);
 							// resolve('错');
+							uni.showToast({	
+								title:error.message,
+								icon:'none'
+							})
 						}
 					});
 				})
@@ -420,7 +425,11 @@
 				})
 			},
 			getList(params) {
-
+				uni.showLoading({
+					title:'加载中...'
+				})
+				// 计算距离,每秒十个
+				params.limit=params.status==0?5:10
 				// if()
 				this.hasMore = true
 				Object.assign(params, {
@@ -440,7 +449,7 @@
 						this.loading = false
 						uni.hideLoading()
 						console.log(res, this.datalist)
-					}, 500)
+					}, 1000)
 					// this.datalist = res
 				})
 			},
@@ -448,12 +457,12 @@
 				Object.assign(this.params, {
 					status: type,
 					page: 1,
+					// limit:type==0?5:10
 				})
 				if (type == 0 && !this.userInfo.on_line) {
 					return
 				}
 				uni.showLoading({
-
 				})
 				// if (this.userInfo.on_line) {
 				this.getList(this.params)
@@ -744,11 +753,11 @@
 		onHide() {
 			// tab页面使用onhide
 			console.log('hide111', this.timer)
-			if (this.timer) {
+			if (String(this.timer.length)>0) {
 				clearInterval(this.timer)
 				this.timer = null
 			}
-			// console.log('hide222', this.timer)
+			console.log('hide222', this.timer)
 		},
 		onUnload() {
 			if (this.timer) {
@@ -795,14 +804,14 @@
 <style lang="scss">
 	.container {
 		padding-top: 0;
-		height: 100vh;
+		height: 100%;
 
 		>.top {
 			background-color: #2E8EF4;
 			width: 96vw;
 			padding: 2vw;
 			color: #fff;
-
+			height: 27vh;
 			>view:first-child {
 				margin: 5vh 0;
 				font-size: 32rpx;
@@ -845,8 +854,6 @@
 
 
 			}
-
-
 		}
 
 
@@ -855,6 +862,12 @@
 	// .hasinput{
 	// 	margin-top: 0;
 	// }
+	.nodata{
+		height: 70vh;
+		>image{
+			margin-top: 10vh;
+		}
+	}
 	.switch {
 		position: relative;
 		top: 11rpx;

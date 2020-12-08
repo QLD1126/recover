@@ -1,8 +1,0 @@
-{
-  "navigationBarBackgroundColor": "#2E8EF4",
-  "backgroundColor": "#2E8EF4",
-  "navigationBarTextStyle": "white",
-  "navigationBarTitleText": "设置收款码",
-  "enablePullDownRefresh": false,
-  "usingComponents": {}
-}
