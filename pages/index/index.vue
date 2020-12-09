@@ -50,12 +50,12 @@
 					<view class="">
 						重量：{{item.weight}}kg
 					</view>
-					<view class="dizhi">
+					<view class="dizhi" @click="toPage('map',item)">
 						服务地址：
 						<text>
 							{{item.user_location}}
 						</text>
-						<image @click="toPage('map',item)" src="../../static/dizhi_s.png" mode="" class="icon_44" v-if="params.status==1"></image>
+						<image  src="../../static/dizhi_s.png" mode="" class="icon_44" v-if="params.status==1"></image>
 					</view>
 					<view class="" v-if="params.status!==0">
 						详细地址：{{item.user_address}}
@@ -222,11 +222,12 @@
 			}
 		},
 		onShow() {
-			if (uni.getStorageSync('TOKEN').length > 0) {
-				this.userinfo()
-			} else {
-				this.loginshow = true
-			}
+			// if (uni.getStorageSync('TOKEN').length > 0) {
+				// this.userinfo()
+			// } else {
+				// if(uni.getStorageSync('TOKEN').length == 0){
+				this.loginshow = uni.getStorageSync('TOKEN').length >0?false:true
+			// }
 		},
 		beforeDestroy() {
 			this.closeSocket();
@@ -449,7 +450,7 @@
 						this.loading = false
 						uni.hideLoading()
 						console.log(res, this.datalist)
-					}, 1000)
+					}, 500)
 					// this.datalist = res
 				})
 			},
@@ -596,6 +597,8 @@
 					uni.setStorageSync('USERINFO', res)
 					this.userInfo = res
 
+				}).catch(()=>{
+					return
 				})
 			},
 			//获取用户的当前设置
@@ -753,7 +756,7 @@
 		onHide() {
 			// tab页面使用onhide
 			console.log('hide111', this.timer)
-			if (String(this.timer.length)>0) {
+			if (String(this.timer).length>0) {
 				clearInterval(this.timer)
 				this.timer = null
 			}
@@ -858,7 +861,6 @@
 
 
 	}
-
 	// .hasinput{
 	// 	margin-top: 0;
 	// }

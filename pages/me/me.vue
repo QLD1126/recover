@@ -2,7 +2,7 @@
 	<view class="container">
 		<image src="../../static/bgjb.png" class="bg" mode=""></image>
 		<view class="">
-			<view class="top" :style="userInfo.open_pay==1?'':'height: 215rpx;'">
+			<view class="top">
 				<view class="flex_between">
 					<view class="">
 						<image @click="lookPic(userInfo.avatar)" :src="userInfo.avatar" mode=""></image>
@@ -14,16 +14,16 @@
 					</view>
 				</view>
 				<!-- 我的环保币 -->
-				<view class="box_702 flex_between" v-if="userInfo.open_pay==1">
+				<view class="box_702 flex_between">
 					<view class="" @click="toPage('rechange')">
-						<text>我的环保币:{{userInfo.integral||0}}</text>
-						<view class="">
+						<text :style="userInfo.open_pay==1?'':'margin-top: 20rpx;'">我的环保币:{{userInfo.integral||0}}</text>
+						<view class="" v-if="userInfo.open_pay==1">
 							充值
 						</view>
 					</view>
 					<view>
-						<text @click="toPage('list')">环保币记录</text>
-						<view class="" @click="toPage('getmoney')">
+						<text @click="toPage('list')" :style="userInfo.open_pay==1?'':'margin-top: 20rpx;'">环保币记录</text>
+						<view v-if="userInfo.open_pay==1" @click="toPage('getmoney')">
 							提现
 						</view>
 					</view>
@@ -32,7 +32,7 @@
 			<!-- 主体 -->
 			<view class="main">
 				<view class="ul_list">
-					<view class="" v-for="(item,index) in ulArr" :key='index' @click="toPage('page',item.url)" :style="userInfo.open_pay==1?'':'margin-top:2vh'">
+					<view class="" v-for="(item,index) in ulArr" :key='index' @click="toPage('page',item.url)">
 						<view class="">
 							<!-- <image src="" mode=""></image> -->
 							<image class="icon_44" :src="item.img" mode=""></image>
