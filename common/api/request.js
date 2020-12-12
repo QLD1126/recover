@@ -59,44 +59,44 @@ function req(obj) {
 							})
 							reject(res.data)
 							break;
-							case 41000001:
+						case 41000001:
 							// 登录状态失败
-								uni.hideLoading()
-								uni.showModal({
-									title: res.data.msg,
-									showCancel: false,
-									success: (res) => {
-										if (res.confirm) {
-											uni.removeStorageSync('LOGIN_DATA')
-											uni.removeStorageSync('TOKEN')
-											uni.removeStorageSync('USERINFO')
-											uni.switchTab({
-												url: '/pages/index/index'
-											})
-										}
+							uni.hideLoading()
+							uni.showModal({
+								title: res.data.msg,
+								showCancel: false,
+								success: (res) => {
+									if (res.confirm) {
+										uni.removeStorageSync('LOGIN_DATA')
+										uni.removeStorageSync('TOKEN')
+										uni.removeStorageSync('USERINFO')
+										uni.switchTab({
+											url: '/pages/index/index'
+										})
 									}
-								})
-								reject(res.data)
-								break
-								// 登录状态有误
-							case 41000002:
-								uni.hideLoading()
-								uni.showModal({
-									title: res.data.msg,
-									showCancel: false,
-									success: (res) => {
-										if (res.confirm) {
-											uni.removeStorageSync('LOGIN_DATA')
-											uni.removeStorageSync('TOKEN')
-											uni.removeStorageSync('USERINFO')
-											uni.switchTab({
-												url: '/pages/index/index'
-											})
-										}
+								}
+							})
+							reject(res.data)
+							break
+							// 登录状态有误
+						case 41000002:
+							uni.hideLoading()
+							uni.showModal({
+								title: res.data.msg,
+								showCancel: false,
+								success: (res) => {
+									if (res.confirm) {
+										uni.removeStorageSync('LOGIN_DATA')
+										uni.removeStorageSync('TOKEN')
+										uni.removeStorageSync('USERINFO')
+										uni.switchTab({
+											url: '/pages/index/index'
+										})
 									}
-								})
-								reject(res.data)
-								break
+								}
+							})
+							reject(res.data)
+							break
 						case 520000:
 							// 不是回收员
 							uni.hideLoading()
@@ -105,36 +105,40 @@ function req(obj) {
 								showCancel: false,
 								success: (res) => {
 									if (res.confirm) {
-										uni.setStorageSync('open_recycle',1)
+										uni.setStorageSync('open_recycle', 1)
 										uni.navigateTo({
 											url: '/pages/index/recover_add/recover_add?status=' + 1
 										})
 									}
 								}
 							})
-								reject(res.data)
+							reject(res.data)
 							break;
 						case 520004:
 							// 审核中
 							uni.hideLoading()
-							uni.setStorageSync('open_recycle',2)
+							uni.setStorageSync('open_recycle', 2)
 							uni.navigateTo({
 								url: '/pages/index/recover_add/recover_add?status=' + 2
 							})
 							reject(res.data)
 							break;
-						case 400:
-							reject(res.data)
-							break;
+						// case 400:
+						// 	// uni.hideLoading()
+						// 	uni.showToast({
+						// 		title: res.data.msg,
+						// 		icon: 'none',
+						// 		duration:1000
+						// 	})
+						// 	reject(res.data)
+						// 	break;
 						default:
-							uni.showToast({
-								title: res.data.status
-							})
-							// uni.showModal({
-							// 	content:err.msg,
-							// 	showCancel:false
-							// })
-							reject(res.data)
+								uni.showToast({
+									title: res.data.msg,
+									icon: 'none',
+									duration:1000
+								})
+								reject(res.data)
 					}
 				}
 			}),

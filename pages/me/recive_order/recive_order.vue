@@ -1,8 +1,5 @@
 <template>
-	<view class="nodata" v-if="datalist.length==0">
-		<image src="../../../static/zwdd.png" mode=""></image>
-		<text class="c_28_888">暂时没有订单</text>
-	</view>
+	<me-empty v-if="datalist.length<1" :hasBtn='true' btnContent='去接单' :native='false' @click.native="toPage('index')" />
 	<view class="container" v-else>
 		<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 			<view class="flex_between">
@@ -39,6 +36,7 @@
 				</view>
 			</view>
 		</view>
+		<uni-load-more :status="loadState"></uni-load-more>
 		<!-- 弹出层 -->
 		<van-popup class='middle_prop' :show='show' closeable @close="show=false" round>
 			<!-- 余额不足 -->
@@ -94,7 +92,7 @@
 					integral: '',
 					weight: '',
 				},
-				hasMore: true,
+				loadState: 'more',
 				datalist: [],
 				loginshow: false,
 				show: false,
@@ -127,6 +125,11 @@
 							url: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint + '&navigation=1'
 						})
 						break;
+					case 'index':
+						uni.switchTab({
+							url: '/pages/index/index'
+						})
+						break;
 				}
 			},
 			showProp(obj) {
@@ -156,52 +159,41 @@
 
 				})
 				this.datalist = []
-				this.hasMore = true
 				Object.assign(params, {
 					page: 1,
-					limit: 10
 				})
 				this.$apis.RECYLE_LIST(params).then(res => {
-					if (res.length < params.limit) {
-						this.hasMore = false
-					}
 					this.datalist = res
+					this.loadState = res.length < params.limit ? 'noMore' : 'more'
 					uni.hideLoading()
 				})
 			},
 			loadMore(params) {
 				this.$apis.RECYLE_LIST(params).then(res => {
-					if (res.length < params.limit) {
-						this.hasMore = false
-					}
 					this.datalist = this.datalist.concat(res)
-					uni.hideLoading()
+					this.loadState = res.length < params.limit ? 'noMore' : 'more'
 				})
 			},
 		},
 		onReachBottom() {
-			if (this.hasMore) {
-				uni.showLoading({})
+			if (this.loadState !== 'noMore') {
+				this.loadState = 'loading'
 				this.params.page++
-				// console.log(this.params, 11)
 				this.loadMore(this.params)
-			} else {
-				if (this.datalist.length == 0) {
-					return
-				}
-				uni.showToast({
-					title: '已加载全部',
-					icon: 'none'
-				})
 			}
 		},
 	}
 </script>
 
 <style lang="scss">
+
 	.container {
 		// height: 98.1vh;
 		height: 100%;
+	}
+
+	.nodata {
+		height: 100vh;
 	}
 
 	.model_jiedan {

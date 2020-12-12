@@ -5,6 +5,7 @@
   "navigationStyle": "custom",
   "enablePullDownRefresh": true,
   "usingComponents": {
+    "uni-load-more": "/components/uni-load-more/uni-load-more",
     "van-switch": "/wxcomponents/vant/dist/switch/index",
     "van-popup": "/wxcomponents/vant/dist/popup/index",
     "van-action-sheet": "/wxcomponents/vant/dist/action-sheet/index",

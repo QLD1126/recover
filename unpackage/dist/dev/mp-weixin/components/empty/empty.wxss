@@ -24,58 +24,34 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.container {
-  padding-top: 0;
-  height: 100%;
+.nodata {
+  width: 100vw;
+  text-align: center;
+  background: #f3f3f3;
 }
-.container > .top {
-  background-color: #2E8EF4;
-  width: 96vw;
-  padding: 2vw;
-  color: #fff;
-  height: 27vh;
-}
-.container > .top > view:first-child {
-  margin: 5vh 0;
-  font-size: 32rpx;
-  font-weight: bold;
-}
-.container > .top .flex_between {
-  margin-bottom: 25rpx;
-}
-.container > .top .flex_between image {
-  width: 44rpx;
-  height: 44rpx;
-  position: relative;
-  top: 10rpx;
-}
-.container > .top .flex_between > view:last-child {
-  margin-top: 12rpx;
-}
-.container > .top > .tabbar {
-  width: 100%;
-  background: #2E8EF4;
-  position: relative;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-}
-.container > .top > .tabbar .white {
-  background: #fff;
-}
-.container > .top + image {
-  margin: 261rpx auto;
+.nodata > image {
   width: 547rpx;
   height: 342rpx;
-  display: block;
+  margin-top: 20vh;
 }
-.switch {
-  position: relative;
-  top: 11rpx;
-  margin-right: 20rpx;
+.nodata > image + view {
+  color: #ccc;
 }
-.nodata {
-  height: 0;
-  width: 0;
+.nodata > image + view + view {
+  width: 318rpx;
+  margin: 0 auto;
+  margin-top: 100rpx;
+}
+.nodata .btn_2_88 {
+  display: inline-block;
+  padding: 0 40rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  -webkit-border-radius: 44rpx;
+          border-radius: 44rpx;
+  color: #fff;
+  text-align: center;
+  background: #23CED7;
+  font-size: 32rpx;
 }
 

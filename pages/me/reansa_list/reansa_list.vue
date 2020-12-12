@@ -1,8 +1,5 @@
 <template>
-	<view class="nodata" v-if="datalist.length==0">
-		<image src="../../../static/zwdd.png" mode=""></image>
-		<text class="c_28_888">暂无交易记录</text>
-	</view>
+	<me-empty v-if="datalist.length<1"></me-empty>
 	<view class="container" v-else>
 		<view class="flex_between" v-for="item in datalist" :key='item.id'>
 			<view class="">
@@ -18,6 +15,7 @@
 				{{item.pm==1?'+':'-'}}{{item.number}}
 			</view>
 		</view>
+		<uni-load-more :status="loadState"></uni-load-more>
 	</view>
 </template>
 
@@ -30,7 +28,7 @@
 					limit: 10,
 					status: null,
 				},
-				hasMore: true,
+				loadState:'more',
 				datalist: [],
 			};
 		},
@@ -44,45 +42,29 @@
 				})
 				// if()
 				this.datalist = []
-				this.hasMore = true
 				Object.assign(params, {
 					page: 1,
-					limit: 10
 				})
 				this.$apis.BILL(params).then(res => {
-					if (res.length < params.limit) {
-						this.hasMore = false
-					}
 					this.datalist = res
+					this.loadState = res.length < params.limit ? 'noMore' : 'more'
 					uni.hideLoading()
 				})
 			},
 			
 			loadMore(params) {
 				this.$apis.BILL(params).then(res => {
-					if (res.length < params.limit) {
-						this.hasMore = false
-					}
 					this.datalist = this.datalist.concat(res)
-					// console.log('我触底了',)
+					this.loadState = res.length < params.limit ? 'noMore' : 'more'
 					uni.hideLoading()
 				})
 			},
 		},
 		onReachBottom() {
-			if (this.hasMore) {
-				uni.showLoading({})
+			if (this.loadState !== 'noMore') {
+				this.loadState = 'loading'
 				this.params.page++
-				// console.log(this.params, 11)
 				this.loadMore(this.params)
-			} else {
-				if(this.datalist.length==0){
-					return
-				}
-				uni.showToast({
-					title: '已加载全部',
-					icon: 'none'
-				})
 			}
 		},
 	}

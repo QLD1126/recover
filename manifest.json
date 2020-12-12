@@ -74,7 +74,8 @@
                 "version" : "1.0.8",
                 "provider" : "wx50b5593e81dd937a"
             }
-        }
+        },
+		"requiredBackgroundModes": ["audio"]
     },
     "mp-alipay" : {
         "usingComponents" : true

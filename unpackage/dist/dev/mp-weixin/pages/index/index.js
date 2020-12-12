@@ -102,7 +102,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components
+var components = {
+  uniLoadMore: function() {
+    return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 109))
+  }
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -278,11 +282,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
 var _qqmapsdk = _interopRequireDefault(__webpack_require__(/*! ../../common/qqmapsdk.js */ 23));
 var _public_data = __webpack_require__(/*! ../../common/public_data.js */ 13);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}
 
@@ -313,7 +312,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         limit: 10,
         status: 0 },
 
-      hasMore: true,
+      loadState: 'more',
       loading: false,
       // 页面
       routine_name: '',
@@ -367,10 +366,6 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     }
   },
   onShow: function onShow() {
-    // if (uni.getStorageSync('TOKEN').length > 0) {
-    // this.userinfo()
-    // } else {
-    // if(uni.getStorageSync('TOKEN').length == 0){
     this.loginshow = uni.getStorageSync('TOKEN').length > 0 ? false : true;
     // }
   },
@@ -426,7 +421,8 @@ var socketHost = _public_data.public_data.socketHost;var _default =
           } });
 
       }).catch(function (e) {
-        console.log(e);
+
+        // console.log(1111,e)
       });;
     },
     getSetting_info: function getSetting_info() {
@@ -583,9 +579,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 
       this.$apis.RECYLE_LIST(params).then(function (res) {
         _this10.datalist = [];
-        if (res.length < params.limit) {
-          _this10.hasMore = false;
-        }
+        _this10.loadState = res.length < params.limit ? 'noMore' : 'more';
         if (params.status == 0) {
           _this10.InverseAnalysis(res);
         }
@@ -602,14 +596,12 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     navbarTap: function navbarTap(type) {
       Object.assign(this.params, {
         status: type,
-        page: 1
-        // limit:type==0?5:10
-      });
+        page: 1 });
+
       if (type == 0 && !this.userInfo.on_line) {
         return;
       }
       uni.showLoading({});
-
       // if (this.userInfo.on_line) {
       this.getList(this.params);
       // }
@@ -619,9 +611,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         res.forEach(function (item) {
           item.juli = 100;
         });
-        if (res.length < params.limit) {
-          _this11.hasMore = false;
-        }
+        _this11.loadState = res.length < params.limit ? 'noMore' : 'more';
         if (params.status == 0) {
           _this11.InverseAnalysis(res);
         }
@@ -932,17 +922,10 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     }, 1000);
   },
   onReachBottom: function onReachBottom() {
-    // 下拉状态触底
-    if (this.hasMore && !this.loading) {
-      uni.showLoading({});
+    if (this.loadState !== 'noMore') {
+      this.loadState = 'loading';
       this.params.page++;
-      // console.log(this.params, 11)
       this.loadMore(this.params);
-    } else {
-      uni.showToast({
-        title: '已加载全部',
-        icon: 'none' });
-
     }
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

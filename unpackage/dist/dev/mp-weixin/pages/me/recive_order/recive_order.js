@@ -92,7 +92,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components
+var components = {
+  uniLoadMore: function() {
+    return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 109))
+  }
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -216,8 +220,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 var _default =
 {
   data: function data() {
@@ -231,7 +233,7 @@ var _default =
         integral: '',
         weight: '' },
 
-      hasMore: true,
+      loadState: 'more',
       datalist: [],
       loginshow: false,
       show: false,
@@ -263,6 +265,11 @@ var _default =
           uni.navigateTo({
             url: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint + '&navigation=1' });
 
+          break;
+        case 'index':
+          uni.switchTab({
+            url: '/pages/index/index' });
+
           break;}
 
     },
@@ -293,43 +300,27 @@ var _default =
 
 
       this.datalist = [];
-      this.hasMore = true;
       Object.assign(params, {
-        page: 1,
-        limit: 10 });
+        page: 1 });
 
       this.$apis.RECYLE_LIST(params).then(function (res) {
-        if (res.length < params.limit) {
-          _this3.hasMore = false;
-        }
         _this3.datalist = res;
+        _this3.loadState = res.length < params.limit ? 'noMore' : 'more';
         uni.hideLoading();
       });
     },
     loadMore: function loadMore(params) {var _this4 = this;
       this.$apis.RECYLE_LIST(params).then(function (res) {
-        if (res.length < params.limit) {
-          _this4.hasMore = false;
-        }
         _this4.datalist = _this4.datalist.concat(res);
-        uni.hideLoading();
+        _this4.loadState = res.length < params.limit ? 'noMore' : 'more';
       });
     } },
 
   onReachBottom: function onReachBottom() {
-    if (this.hasMore) {
-      uni.showLoading({});
+    if (this.loadState !== 'noMore') {
+      this.loadState = 'loading';
       this.params.page++;
-      // console.log(this.params, 11)
       this.loadMore(this.params);
-    } else {
-      if (this.datalist.length == 0) {
-        return;
-      }
-      uni.showToast({
-        title: '已加载全部',
-        icon: 'none' });
-
     }
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

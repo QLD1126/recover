@@ -27,6 +27,9 @@
 .container {
   height: 100%;
 }
+.nodata {
+  height: 100vh;
+}
 .model_jiedan {
   margin-top: 0;
 }

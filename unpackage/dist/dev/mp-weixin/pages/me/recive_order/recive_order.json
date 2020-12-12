@@ -2,6 +2,7 @@
   "navigationBarTitleText": "我的接单记录",
   "enablePullDownRefresh": false,
   "usingComponents": {
+    "uni-load-more": "/components/uni-load-more/uni-load-more",
     "van-popup": "/wxcomponents/vant/dist/popup/index",
     "routePlan": "plugin://routePlan/index"
   }

@@ -126,6 +126,9 @@
 </script>
 
 <style lang="scss">
+	page{
+		background: #fff;
+	}
 	.container {
 		background: rgba(0, 0, 0, 0);
 	}

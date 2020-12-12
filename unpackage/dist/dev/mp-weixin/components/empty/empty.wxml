@@ -1,0 +1,1 @@
+<view class="nodata"><image src="{{image}}" mode></image><view class="c_28_888">{{description}}</view><block wx:if="{{hasBtn}}"><view data-event-opts="{{[['tap',[['toPage',['$event']]]]]}}" class="btn_2_88" bindtap="__e">{{''+btnContent+''}}</view></block></view>

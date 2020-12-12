@@ -8274,17 +8274,21 @@ function req(obj) {
 
               reject(res.data);
               break;
-            case 400:
-              reject(res.data);
-              break;
+            // case 400:
+            // 	// uni.hideLoading()
+            // 	uni.showToast({
+            // 		title: res.data.msg,
+            // 		icon: 'none',
+            // 		duration:1000
+            // 	})
+            // 	reject(res.data)
+            // 	break;
             default:
               uni.showToast({
-                title: res.data.status });
+                title: res.data.msg,
+                icon: 'none',
+                duration: 1000 });
 
-              // uni.showModal({
-              // 	content:err.msg,
-              // 	showCancel:false
-              // })
               reject(res.data);}
 
         }

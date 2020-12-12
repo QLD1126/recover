@@ -24,13 +24,7 @@
 				</view>
 			</view>
 		</view>
-		<!-- <view class="" @click="a">
-			sfdsudhfuifd
-		</view> -->
-		<view class="nodata" v-if="noOrder">
-			<image src="../../static/zwdd.png" mode=""></image>
-			<text class="c_28_888">暂时没有订单</text>
-		</view>
+		<me-empty v-if="noOrder" description="暂时没有订单"></me-empty>
 		<view v-else>
 			<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 				<view class="flex_between">
@@ -55,7 +49,7 @@
 						<text>
 							{{item.user_location}}
 						</text>
-						<image  src="../../static/dizhi_s.png" mode="" class="icon_44" v-if="params.status==1"></image>
+						<image src="../../static/dizhi_s.png" mode="" class="icon_44" v-if="params.status==1"></image>
 					</view>
 					<view class="" v-if="params.status!==0">
 						详细地址：{{item.user_address}}
@@ -76,6 +70,7 @@
 					</view>
 				</view>
 			</view>
+			<uni-load-more :status="loadState"></uni-load-more>
 		</view>
 		<!-- 弹出层 -->
 		<van-popup class='middle_prop' :show='show' closeable @close="onClose" round>
@@ -168,7 +163,7 @@
 					limit: 10,
 					status: 0,
 				},
-				hasMore: true,
+				loadState: 'more',
 				loading: false,
 				// 页面
 				routine_name: '',
@@ -222,11 +217,7 @@
 			}
 		},
 		onShow() {
-			// if (uni.getStorageSync('TOKEN').length > 0) {
-				// this.userinfo()
-			// } else {
-				// if(uni.getStorageSync('TOKEN').length == 0){
-				this.loginshow = uni.getStorageSync('TOKEN').length >0?false:true
+			this.loginshow = uni.getStorageSync('TOKEN').length > 0 ? false : true
 			// }
 		},
 		beforeDestroy() {
@@ -281,7 +272,8 @@
 						}
 					})
 				}).catch((e) => {
-					console.log(e)
+
+					// console.log(1111,e)
 				});;
 			},
 			getSetting_info() {
@@ -343,9 +335,9 @@
 							// uni.show
 							// console.error(error);
 							// resolve('错');
-							uni.showToast({	
-								title:error.message,
-								icon:'none'
+							uni.showToast({
+								title: error.message,
+								icon: 'none'
 							})
 						}
 					});
@@ -427,10 +419,10 @@
 			},
 			getList(params) {
 				uni.showLoading({
-					title:'加载中...'
+					title: '加载中...'
 				})
 				// 计算距离,每秒十个
-				params.limit=params.status==0?5:10
+				params.limit = params.status == 0 ? 5 : 10
 				// if()
 				this.hasMore = true
 				Object.assign(params, {
@@ -438,9 +430,7 @@
 				})
 				this.$apis.RECYLE_LIST(params).then(res => {
 					this.datalist = []
-					if (res.length < params.limit) {
-						this.hasMore = false
-					}
+					this.loadState = res.length < params.limit ? 'noMore' : 'more'
 					if (params.status == 0) {
 						this.InverseAnalysis(res)
 					}
@@ -458,13 +448,11 @@
 				Object.assign(this.params, {
 					status: type,
 					page: 1,
-					// limit:type==0?5:10
 				})
 				if (type == 0 && !this.userInfo.on_line) {
 					return
 				}
-				uni.showLoading({
-				})
+				uni.showLoading({})
 				// if (this.userInfo.on_line) {
 				this.getList(this.params)
 				// }
@@ -474,9 +462,7 @@
 					res.forEach(item => {
 						item.juli = 100
 					})
-					if (res.length < params.limit) {
-						this.hasMore = false
-					}
+					this.loadState = res.length < params.limit ? 'noMore' : 'more'
 					if (params.status == 0) {
 						this.InverseAnalysis(res)
 					}
@@ -571,7 +557,7 @@
 							clearInterval(this.timer)
 							this.timer = null
 						}
-						console.log('下线',this.timer)
+						console.log('下线', this.timer)
 					} else {
 						// this.connectSocketInit_local()
 						this.connectSocketInit_order()
@@ -597,7 +583,7 @@
 					uni.setStorageSync('USERINFO', res)
 					this.userInfo = res
 
-				}).catch(()=>{
+				}).catch(() => {
 					return
 				})
 			},
@@ -756,7 +742,7 @@
 		onHide() {
 			// tab页面使用onhide
 			console.log('hide111', this.timer)
-			if (String(this.timer).length>0) {
+			if (String(this.timer).length > 0) {
 				clearInterval(this.timer)
 				this.timer = null
 			}
@@ -787,20 +773,12 @@
 			}, 1000);
 		},
 		onReachBottom() {
-			// 下拉状态触底
-			if (this.hasMore && !this.loading) {
-				uni.showLoading({})
+			if (this.loadState !== 'noMore') {
+				this.loadState = 'loading'
 				this.params.page++
-				// console.log(this.params, 11)
 				this.loadMore(this.params)
-			} else {
-				uni.showToast({
-					title: '已加载全部',
-					icon: 'none'
-				})
 			}
-		},
-
+		}
 	}
 </script>
 
@@ -815,6 +793,7 @@
 			padding: 2vw;
 			color: #fff;
 			height: 27vh;
+
 			>view:first-child {
 				margin: 5vh 0;
 				font-size: 32rpx;
@@ -861,18 +840,15 @@
 
 
 	}
-	// .hasinput{
-	// 	margin-top: 0;
-	// }
-	.nodata{
-		height: 70vh;
-		>image{
-			margin-top: 10vh;
-		}
-	}
+
 	.switch {
 		position: relative;
 		top: 11rpx;
 		margin-right: 20rpx;
+	}
+
+	.nodata {
+		height: 0;
+		width: 0;
 	}
 </style>

@@ -19,32 +19,8 @@
 <style lang="scss">
 	/*每个页面公共css */
 	@import "./common/iconfont.css";
-	// 列表无数据
-	.nodata {
-		width: 547rpx;
-		margin: 0 auto;
-		margin-top: 20vh;
-		text-align: center;
-		background: transparent !important;
-		>image,
-		text,
-		view {
-			display: block;
-		}
-		>image {
-			width: 547rpx;
-			height: 342rpx;
-
-			+text {
-				color: #ccc;
-				+view {
-					width: 318rpx;
-					margin: 0 auto;
-					margin-top: 100rpx;
-				}
-
-			}
-		}
+	page{
+		background-color: #f3f3f3;
 	}
 	.pro_title {
 		color: #323232;
@@ -61,22 +37,6 @@
 		background: #2D8DF4;
 		margin-right: 22rpx;
 	}
-.nodata {
-			width: 547rpx;
-			margin: 0 auto;
-			margin-top: 20vh;
-			text-align: center;
-			background: transparent !important;
-
-			>image {
-				width: 547rpx;
-				height: 342rpx;
-
-				+text {
-					color: #ccc;
-				}
-			}
-		}
 	.btn_line {
 		color: #fff;
 		background-image: linear-gradient(to right, rgba(51, 167, 250, 1), rgba(33, 211, 211, 1)) !important;

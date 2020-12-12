@@ -46,6 +46,10 @@
       "provider": "wx50b5593e81dd937a"
     }
   },
-  "usingComponents": {},
-  "sitemapLocation": "sitemap0.json"
+  "requiredBackgroundModes": [
+    "audio"
+  ],
+  "usingComponents": {
+    "me-empty": "/components/empty/empty"
+  }
 }

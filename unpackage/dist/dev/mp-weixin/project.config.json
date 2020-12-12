@@ -27,8 +27,9 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/me/me",
-          "pathName": "pages/me/me",
+          "name": "pages/me/recive_order/recive_order",
+          "pathName": "pages/me/recive_order/recive_order",
+          "query": "",
           "scene": null
         }
       ]
