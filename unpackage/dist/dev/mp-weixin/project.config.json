@@ -12,8 +12,6 @@
   "libVersion": "",
   "appid": "wxef32ea7c13f5318c",
   "projectname": "recover",
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
   "condition": {
     "plugin": {
       "list": []
@@ -27,9 +25,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/me/recive_order/recive_order",
-          "pathName": "pages/me/recive_order/recive_order",
-          "query": "",
+          "name": "pages/me/me",
+          "pathName": "pages/me/me",
           "scene": null
         }
       ]

@@ -104,7 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components = {
   uniLoadMore: function() {
-    return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 109))
+    return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 98))
   }
 }
 var render = function() {
@@ -282,6 +282,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 var _qqmapsdk = _interopRequireDefault(__webpack_require__(/*! ../../common/qqmapsdk.js */ 23));
 var _public_data = __webpack_require__(/*! ../../common/public_data.js */ 13);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}
 
@@ -293,6 +304,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 {
   data: function data() {
     return {
+      a: ['http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284', 'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284', 'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284'],
       // 弹出层
       loginshow: false,
       show: false,
@@ -359,6 +371,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       _this2.routine_name = res.routine_name;
     });
     this.getUserLocation();
+    // 记得解开注释
     if (uni.getStorageSync('TOKEN').length > 0) {
       this.goLogin(uni.getStorageSync('LOGIN_DATA'));
     } else {
@@ -384,6 +397,26 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     } },
 
   methods: {
+    audio: function audio() {
+      var innerAudioContext = uni.createInnerAudioContext();
+      innerAudioContext.autoplay = true;
+      innerAudioContext.src = 'https://www.guanshange.com/static/file/dingdong.mp3';
+      innerAudioContext.onPlay(function () {
+        console.log('开始播放');
+      });
+      innerAudioContext.onError(function (res) {
+        console.log(res.errMsg);
+        console.log(res.errCode);
+      });
+    },
+    lookPic: function lookPic(url) {
+      uni.previewImage({
+        urls: url,
+        complete: function complete(err) {
+          console.log(err);
+        } });
+
+    },
     getlocalset: function getlocalset() {var _this3 = this;
       this.getSetting_local().then(function (res) {
         if (res) {
@@ -472,7 +505,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
           latitude: item.user_latitude,
           longitude: item.user_longitude }];
 
-        console.log(1111, end);
+        console.log('距离计算', start, end);
         _qqmapsdk.default.calculateDistance({
           from: start || '', //若起点有数据则采用起点坐标，若为空默认当前地址
           to: end, //终点坐标
@@ -837,6 +870,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         // 注：只有连接正常打开中 ，才能正常收到消息
         _this16.socketTask_order.onMessage(function (res) {
           if (res.data !== '') {
+            _this16.audio();
             uni.showModal({
               content: '接到系统派发订单',
               cancelText: '稍后',

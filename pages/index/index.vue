@@ -54,6 +54,17 @@
 					<view class="" v-if="params.status!==0">
 						详细地址：{{item.user_address}}
 					</view>
+					<view class="">
+						备注：{{item.mark||'暂无备注信息'}}
+					</view>
+					<view class="" v-if="item.images.length!==0">
+						图片：
+						<view class="images" @click='lookPic(item.images)'>
+						<!-- <image v-for="img in item.images" :src="img" mode=""></image> -->
+							
+						<image v-for="(img,index) in item.images" :key='index' :src="img" mode=""></image >
+						</view>
+					</view>
 					<view class="" v-if="params.status==0">
 						距离：{{item.distance||0}}m
 					</view>
@@ -144,6 +155,7 @@
 	export default {
 		data() {
 			return {
+				a:['http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284','http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284','http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284'],
 				// 弹出层
 				loginshow: false,
 				show: false,
@@ -210,6 +222,7 @@
 				this.routine_name = res.routine_name
 			})
 			this.getUserLocation()
+			// 记得解开注释
 			if (uni.getStorageSync('TOKEN').length > 0) {
 				this.goLogin(uni.getStorageSync('LOGIN_DATA'))
 			} else {
@@ -235,6 +248,26 @@
 			}
 		},
 		methods: {
+			audio(){
+				const innerAudioContext = uni.createInnerAudioContext();
+				innerAudioContext.autoplay = true;
+				innerAudioContext.src = 'https://www.guanshange.com/static/file/dingdong.mp3';
+				innerAudioContext.onPlay(() => {
+				  console.log('开始播放');
+				});
+				innerAudioContext.onError((res) => {
+				  console.log(res.errMsg);
+				  console.log(res.errCode);
+				});
+			},
+			lookPic(url){
+				uni.previewImage({
+					urls:url,
+					complete(err){
+						console.log(err)
+					}
+				})
+			},
 			getlocalset() {
 				this.getSetting_local().then(res => {
 					if (res) {
@@ -323,7 +356,7 @@
 						latitude: item.user_latitude,
 						longitude: item.user_longitude
 					}]
-					console.log(1111, end)
+					console.log('距离计算',start,end)
 					qqmapsdk.calculateDistance({
 						from: start || '', //若起点有数据则采用起点坐标，若为空默认当前地址
 						to: end, //终点坐标
@@ -688,6 +721,7 @@
 					// 注：只有连接正常打开中 ，才能正常收到消息
 					this.socketTask_order.onMessage((res) => {
 						if (res.data !== '') {
+							this.audio()
 							uni.showModal({
 								content: '接到系统派发订单',
 								cancelText: '稍后',
@@ -783,6 +817,14 @@
 </script>
 
 <style lang="scss">
+	.images{
+		width: 90vw;
+		display: flex;
+		>image{
+			width: 220rpx;
+			height: 220rpx;
+		}
+	}
 	.container {
 		padding-top: 0;
 		height: 100%;

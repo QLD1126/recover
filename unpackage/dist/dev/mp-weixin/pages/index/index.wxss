@@ -24,6 +24,16 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.images {
+  width: 90vw;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+.images > image {
+  width: 220rpx;
+  height: 220rpx;
+}
 .container {
   padding-top: 0;
   height: 100%;
