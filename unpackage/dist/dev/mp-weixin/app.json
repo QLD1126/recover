@@ -8,7 +8,8 @@
     "pages/me/get_money/get_money",
     "pages/me/rechange/rechange",
     "pages/me/setEwm/setEwm",
-    "pages/index/recover_add/recover_add"
+    "pages/index/recover_add/recover_add",
+    "pages/login/login"
   ],
   "subPackages": [],
   "window": {

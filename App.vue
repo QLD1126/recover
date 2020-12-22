@@ -10,7 +10,7 @@
 			console.log('App Show')
 		},
 		onHide: function() {
-			console.log('App Hide',this.timer)
+			console.log('App Hide')
 			
 		}
 	}
@@ -28,7 +28,6 @@
 		font-weight: bold;
 		margin-bottom: 40rpx;
 	}
-
 	/*每个页面公共css */
 	.b_zhu {
 		display: inline-block;

@@ -104,7 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components = {
   uniLoadMore: function() {
-    return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 98))
+    return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 106))
   }
 }
 var render = function() {
@@ -294,7 +294,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var _qqmapsdk = _interopRequireDefault(__webpack_require__(/*! ../../common/qqmapsdk.js */ 23));
-var _public_data = __webpack_require__(/*! ../../common/public_data.js */ 13);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}
+var _public_data = __webpack_require__(/*! ../../common/public_data.js */ 13);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 
 
 var plugin = requirePlugin('routePlan');
@@ -304,7 +304,11 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 {
   data: function data() {
     return {
-      a: ['http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284', 'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284', 'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284'],
+      a: [
+      'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284',
+      'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284',
+      'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284'],
+
       // 弹出层
       loginshow: false,
       show: false,
@@ -331,7 +335,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       loginData: uni.getStorageSync('LOGIN_DATA') || {},
       userInfo: uni.getStorageSync('USERINFO') || {},
       datalist: [],
-      city: '暂未开启定位',
+      city: uni.getStorageSync('LOCAL').city || '暂未开启定位',
       titleArr: [{
         title: '新订单',
         type: 0 },
@@ -366,29 +370,51 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     };
   },
   onLoad: function onLoad() {var _this2 = this;
-    // this.goLogin(this.loginData)
     this.$apis.INDEX().then(function (res) {
       _this2.routine_name = res.routine_name;
     });
     this.getUserLocation();
-    // 记得解开注释
-    if (uni.getStorageSync('TOKEN').length > 0) {
-      this.goLogin(uni.getStorageSync('LOGIN_DATA'));
-    } else {
-      this.loginshow = true;
+    // this.goLogin(this.loginData)
+    // console
+    if (uni.getStorageSync('TOKEN').length == '') {
+      uni.showModal({
+        title: '是否立即登录？',
+        cancelText: '稍后',
+        confirmText: '立即前往',
+        success: function success(res) {
+          if (res.confirm) {
+            uni.navigateTo({
+              url: '/pages/login/login' });
+
+          }
+        } });
+
     }
   },
-  onShow: function onShow() {
-    this.loginshow = uni.getStorageSync('TOKEN').length > 0 ? false : true;
+  onShow: function onShow() {var _this3 = this;
+    // this.loginshow=!getApp().globalData.hasLogin
+    // console.log(getApp().globalData.hasLogin,11111)
+    // if(){
+
     // }
+    // 记得解开注释
+    // this.goLogin(uni.getStorageSync('LOGIN_DATA'))
+    this.getSetting_local().then(function (res) {
+      if (res) {
+        _this3.getUserLocation();
+      } else {
+        _this3.city = '暂未开启定位';
+        if (_this3.timer) {
+          clearInterval(_this3.timer);
+          _this3.timer = null;
+        }
+      }
+    });
   },
-  beforeDestroy: function beforeDestroy() {
-    this.closeSocket();
-    this.closeSocket_order();
-  },
+
   computed: {
     noOrder: function noOrder() {
-      if (this.userInfo.on_line && this.datalist.length > 0) {
+      if ((this.userInfo.on_line !== 0 || !this.userInfo.on_line) && this.datalist.length > 0) {
         return false;
 
       } else {
@@ -405,8 +431,8 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         console.log('开始播放');
       });
       innerAudioContext.onError(function (res) {
-        console.log(res.errMsg);
-        console.log(res.errCode);
+        // console.log(res.errMsg);
+        // console.log(res.errCode);
       });
     },
     lookPic: function lookPic(url) {
@@ -417,24 +443,27 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         } });
 
     },
-    getlocalset: function getlocalset() {var _this3 = this;
+    getlocalset: function getlocalset() {var _this4 = this;
+      console.log('打开定位');
       this.getSetting_local().then(function (res) {
         if (res) {
-          _this3.getUserLocation();
+          console.log('打开成功', res);
+          _this4.getUserLocation();
         } else {
-          _this3.show = true;
+          // console.log('打开失败', res)
+          _this4.show = true;
         }
       });
     },
-    getuserSet: function getuserSet() {var _this4 = this;
+    getuserSet: function getuserSet() {var _this5 = this;
       uni.openSetting({
         success: function success(setRes) {
           if (setRes.authSetting['scope.userLocation']) {
-            _this4.show = false;
+            _this5.show = false;
             uni.showLoading({
               title: '定位中...' });
 
-            _this4.getUserLocation();
+            _this5.getUserLocation();
             uni.hideLoading();
           }
         } });
@@ -448,14 +477,13 @@ var socketHost = _public_data.public_data.socketHost;var _default =
               // console.log('存在');
               resolve(true);
             } else {
-              // console.log('不存在');
+              // console.log('不存在1111');
               resolve(false);
             }
           } });
 
       }).catch(function (e) {
 
-        // console.log(1111,e)
       });;
     },
     getSetting_info: function getSetting_info() {
@@ -473,22 +501,27 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 
       }).catch(function (e) {
         console.log(e);
-      });;
+      });
     },
-    getUserLocation: function getUserLocation() {var _this5 = this;
-
+    getUserLocation: function getUserLocation() {var _this6 = this;
+      // console.log('获取定位1111')
       // 地图
       // var that = this;
       _qqmapsdk.default.reverseGeocoder({
         success: function success(res) {
           var a = res.result;
-          // console.log(location)
-          _this5.city = a.address_component.city;
-          Object.assign(_this5.location, {
+          // console.log(a,'定位')
+          _this6.city = a.address_component.city;
+          // console.log(999999,this.city)
+          var obj = _objectSpread(_objectSpread({}, a.address_component),
+          a.location);
+
+          uni.setStorageSync('LOCAL', obj);
+          Object.assign(_this6.location, {
             lat: a.location.lat,
             lng: a.location.lng });
 
-          _this5.clickRequest(a.location.lat, a.location.lng);
+          _this6.clickRequest(a.location.lat, a.location.lng);
         } });
 
     },
@@ -533,10 +566,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
 
           break;
         case 'map':
-          // let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
-
           // //使用在腾讯位置服务申请的key
-          // let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
           var endPoint = JSON.stringify({ //终点
             'name': obj.user_address,
             'latitude': obj.user_latitude,
@@ -548,22 +578,22 @@ var socketHost = _public_data.public_data.socketHost;var _default =
           break;}
 
     },
-    deleteOrder: function deleteOrder(id) {var _this6 = this;
+    deleteOrder: function deleteOrder(id) {var _this7 = this;
       uni.showModal({
         content: '确定删除该订单吗?',
         success: function success(res) {
           if (res.confirm) {
-            _this6.$apis.RECYCLE_REMOVE(id).then(function () {
-              _this6.getList(_this6.params);
+            _this7.$apis.RECYCLE_REMOVE(id).then(function () {
+              _this7.getList(_this7.params);
             });
           }
         } });
 
     },
-    sure: function sure(id) {var _this7 = this;
+    sure: function sure(id) {var _this8 = this;
       this.$apis.RECYCLE_SURE(id).then(function () {
-        _this7.params.status = 1;
-        _this7.getList(_this7.params);
+        _this8.params.status = 1;
+        _this8.getList(_this8.params);
       });
     },
     showProp: function showProp(obj) {
@@ -573,33 +603,34 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         id: obj.order_id });
 
     },
-    complate: function complate(data) {var _this8 = this;
+    complate: function complate(data) {var _this9 = this;
       this.$apis.RECYCLE_COMPLATE(data.id, data).then(function (res) {
-        _this8.show = false;
-        _this8.params.status = 2;
-        _this8.getList(_this8.params);
+        _this9.show = false;
+        _this9.params.status = 2;
+        _this9.getList(_this9.params);
       }).catch(function (err) {
         console.log(err, 'err');
-        _this8.prop = '余额';
+        _this9.prop = '余额';
       });
     },
     // 上下线
-    setLine: function setLine(e) {var _this9 = this;
+    setLine: function setLine(e) {var _this10 = this;
       // if (this.userInfo.on_line) {
       uni.showModal({
         content: this.userInfo.on_line ? '关闭后系统将不会为你派发订单' : '开启后系统将为您派发订单',
         success: function success(res) {
           // 确认关闭
           if (res.confirm) {
-            _this9.userInfo.on_line = !_this9.userInfo.on_line;
-            _this9.$apis.RECYCLE_LINE(_this9.userInfo.on_line ? 1 : 0).then(function () {
-              _this9.userinfo();
+            _this10.userInfo.on_line = !_this10.userInfo.on_line;
+            _this10.$apis.RECYCLE_LINE(_this10.userInfo.on_line ? 1 : 0).then(function () {
+              _this10.userinfo();
+
             });
           }
         } });
 
     },
-    getList: function getList(params) {var _this10 = this;
+    getList: function getList(params) {var _this11 = this;
       uni.showLoading({
         title: '加载中...' });
 
@@ -611,17 +642,17 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         page: 1 });
 
       this.$apis.RECYLE_LIST(params).then(function (res) {
-        _this10.datalist = [];
-        _this10.loadState = res.length < params.limit ? 'noMore' : 'more';
+        _this11.datalist = [];
+        _this11.loadState = res.length < params.limit ? 'noMore' : 'more';
         if (params.status == 0) {
-          _this10.InverseAnalysis(res);
+          _this11.InverseAnalysis(res);
         }
         //防止还没计算出结果就一把值赋给datalist
         setTimeout(function () {
-          _this10.datalist = res;
-          _this10.loading = false;
+          _this11.datalist = res;
+          _this11.loading = false;
           uni.hideLoading();
-          console.log(res, _this10.datalist);
+          console.log(res, _this11.datalist);
         }, 500);
         // this.datalist = res
       });
@@ -632,6 +663,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         page: 1 });
 
       if (type == 0 && !this.userInfo.on_line) {
+        this.datalist = [];
         return;
       }
       uni.showLoading({});
@@ -639,18 +671,18 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       this.getList(this.params);
       // }
     },
-    loadMore: function loadMore(params) {var _this11 = this;
+    loadMore: function loadMore(params) {var _this12 = this;
       this.$apis.RECYLE_LIST(params).then(function (res) {
         res.forEach(function (item) {
           item.juli = 100;
         });
-        _this11.loadState = res.length < params.limit ? 'noMore' : 'more';
+        _this12.loadState = res.length < params.limit ? 'noMore' : 'more';
         if (params.status == 0) {
-          _this11.InverseAnalysis(res);
+          _this12.InverseAnalysis(res);
         }
         //防止还没计算出结果就一把值赋给datalist
         setTimeout(function () {
-          _this11.datalist = _this11.datalist.concat(res);
+          _this12.datalist = _this12.datalist.concat(res);
           uni.hideLoading();
         }, 500);
       });
@@ -658,112 +690,40 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     onClose: function onClose() {
       this.show = false;
     },
-    //微信授权登录
-    getUserInfo: function getUserInfo(e) {var _this12 = this;
-      var p = this.getSetting_info();
-      p.then(function (isAuth) {
-        console.log('是否已经授权', isAuth);
-        if (isAuth) {
-          uni.showLoading({
-            title: '登录中...' });
-
-          var res = e.detail;
-          Object.assign(_this12.loginData, {
-            iv: res.iv,
-            encryptedData: res.encryptedData,
-            'catch_key': '' });
-
-          _this12.goLogin(_this12.loginData);
-        } else {
-          // this.loginshow=true
-          uni.showToast({
-            title: '授权失败，请确认授权已开启',
-            mask: true,
-            icon: 'none' });
-
-        }
-      });
-    },
-    goLogin: function goLogin(data) {var _this13 = this;
-      var p = this.getSetting_info();
-      p.then(function (res) {
-        if (res) {
-          uni.login({
-            provider: 'weixin',
-            success: function success(res) {
-              Object.assign(data, {
-                jsCode: res.code });
-
-              _this13.$apis.LOGIN(data).then(function (res) {
-                // console.log(res, '登录')
-                if (res.cache_key !== '') {
-                  Object.assign(_this13.loginData, {
-                    cache_key: res.cache_key });
-
-                }
-                uni.setStorageSync('TOKEN', res.token);
-                uni.setStorageSync('LOGIN_DATA', _this13.loginData);
-                _this13.loginshow = false;
-                // this.setLocation(this.localData)
-                _this13.userinfo();
-                getApp().globalData.hasLogin = true;
-                uni.hideLoading();
-              }).catch(function (error) {
-                uni.hideLoading();
-                _this13.loginshow = true;
-                uni.showModal({
-                  content: error.msg + ',点击重试',
-                  showCancel: false,
-                  success: function success(res) {
-                    if (res.confirm) {
-                      _this13.goLogin();
-                    }
-                  } });
-
-                // console.log(error, this.loginshow)
-              });
-            } });
-
-        } else {
-          _this13.loginshow = true;
-        }
-      });
-
-    },
-    userinfo: function userinfo() {var _this14 = this;
+    userinfo: function userinfo() {var _this13 = this;
       this.$apis.USERINFO().then(function (res) {
         if (res.on_line == 0 || !res.on_line) {
-          _this14.closeSocket();
-          _this14.closeSocket_order();
-          if (_this14.timer) {
-            clearInterval(_this14.timer);
-            _this14.timer = null;
+          _this13.closeSocket();
+          _this13.closeSocket_order();
+          if (_this13.timer) {
+            clearInterval(_this13.timer);
+            _this13.timer = null;
           }
-          console.log('下线', _this14.timer);
+          console.log('下线', _this13.timer);
         } else {
           // this.connectSocketInit_local()
-          _this14.connectSocketInit_order();
-          _this14.getSetting_local().then(function (res) {
+          _this13.connectSocketInit_order();
+          _this13.getSetting_local().then(function (res) {
             // this.show = !res
             if (res) {
               // this.getUserLocation()
-              _this14.connectSocketInit_local();
-              _this14.timer = setInterval(function () {
-                _this14.getUserLocation();
-                _this14.clickRequest_order();
+              _this13.connectSocketInit_local();
+              _this13.timer = setInterval(function () {
+                _this13.getUserLocation();
+                _this13.clickRequest_order();
               }, 5000);
               // 最新订单列表
             } else {
-              _this14.prop = '位置';
+              _this13.prop = '位置';
             }
           });
-          _this14.getList(_this14.params);
+          _this13.getList(_this13.params);
           console.log('上线');
         }
         res.on_line = res.on_line == 1 ? true : false;
         // this.InverseAnalysis(res.latitude, res.longitude)
         uni.setStorageSync('USERINFO', res);
-        _this14.userInfo = res;
+        _this13.userInfo = res;
 
       }).catch(function () {
         return;
@@ -790,7 +750,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     // 长连接
     // 进入这个页面的时候创建websocket连接【整个页面随时使用】
     // 定位
-    connectSocketInit_local: function connectSocketInit_local() {var _this15 = this;
+    connectSocketInit_local: function connectSocketInit_local() {var _this14 = this;
       // 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
       this.socketTask = uni.connectSocket({
         // 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
@@ -802,20 +762,20 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       // 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
       this.socketTask.onOpen(function (res) {
         // console.log("定位连接正常打开中...！");
-        _this15.is_open_socket = true;
+        _this14.is_open_socket = true;
         // 注：只有连接正常打开中 ，才能正常成功发送消息
-        _this15.socketTask.send({
-          data: 'type=2&id=' + _this15.userInfo.id + '&latitude=' + _this15.location.lat + '&longitude=' + _this15.location.lng,
-          success: function success() {
-            // console.log("消息发送成功!");
-            return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:case "end":return _context.stop();}}}, _callee);}))();} });
+        _this14.socketTask.send({
+          data: 'type=2&id=' + _this14.userInfo.id + '&latitude=' + _this14.location.lat + '&longitude=' + _this14.location.lng,
+          success: function success() {return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+                      console.log("消息发送成功!");case 1:case "end":return _context.stop();}}}, _callee);}))();
+          } });
 
         // 注：只有连接正常打开中 ，才能正常收到消息
-        _this15.socketTask.onMessage(function (res) {
+        _this14.socketTask.onMessage(function (res) {
           if (res.data !== '') {
             var obj = JSON.parse(res.data);
           }
-          // console.log(res.data, '定位结果')
+          console.log(res.data, '定位结果');
         });
       });
       // 这里仅是事件监听【如果socket关闭了会执行】
@@ -828,10 +788,14 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       this.socketTask.close({
         success: function success(res) {
           this.is_open_socket = false;
-          // console.log("定位关闭成功", res)
+          console.log("定位关闭成功", res);
         },
         fail: function fail(err) {
-          // console.log("定位关闭失败", err)
+          console.log("定位关闭失败", err);
+          // uni.showToast({
+          // 	title: 'localSocket not close' + err.errMsg,
+          // 	icon: 'none'
+          // })
         } });
 
     },
@@ -840,14 +804,14 @@ var socketHost = _public_data.public_data.socketHost;var _default =
         // websocket的服务器的原理是:发送一次消息,同时返回一组数据【否则服务器会进去死循环崩溃】
         this.socketTask.send({
           data: 'type=2&id=' + this.userInfo.id + '&latitude=' + lat + '&longitude=' + lng,
-          success: function success() {
-            // console.log("定位消息发送成功");
-            return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:case "end":return _context2.stop();}}}, _callee2);}))();} });
+          success: function success() {return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:
+                      console.log("定位消息发送成功");case 1:case "end":return _context2.stop();}}}, _callee2);}))();
+          } });
 
       }
     },
     // 新订单
-    connectSocketInit_order: function connectSocketInit_order() {var _this16 = this;
+    connectSocketInit_order: function connectSocketInit_order() {var _this15 = this;
       // 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
       this.socketTask_order = uni.connectSocket({
         // 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
@@ -859,18 +823,18 @@ var socketHost = _public_data.public_data.socketHost;var _default =
       // 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
       this.socketTask_order.onOpen(function (res) {
         // console.log("订单连接正常打开中...！");
-        _this16.is_open_socket_order = true;
+        _this15.is_open_socket_order = true;
         // 注：只有连接正常打开中 ，才能正常成功发送消息
-        _this16.socketTask_order.send({
-          data: 'type=3&id=' + _this16.userInfo.id,
+        _this15.socketTask_order.send({
+          data: 'type=3&id=' + _this15.userInfo.id,
           success: function success() {return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee3() {return _regenerator.default.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:
                       console.log("订单消息发送成功!");case 1:case "end":return _context3.stop();}}}, _callee3);}))();
           } });
 
         // 注：只有连接正常打开中 ，才能正常收到消息
-        _this16.socketTask_order.onMessage(function (res) {
+        _this15.socketTask_order.onMessage(function (res) {
           if (res.data !== '') {
-            _this16.audio();
+            _this15.audio();
             uni.showModal({
               content: '接到系统派发订单',
               cancelText: '稍后',
@@ -879,14 +843,13 @@ var socketHost = _public_data.public_data.socketHost;var _default =
                 if (res.confirm) {
                   // let obj = JSON.parse(res.data)
                   console.log(res.data, '订单结果');
-                  Object.assign(_this16.params, {
+                  Object.assign(_this15.params, {
                     page: 1,
                     status: 0 });
 
-                  _this16.getList(_this16.params);
+                  _this15.getList(_this15.params);
                 }
               } });
-
 
 
           }
@@ -905,7 +868,11 @@ var socketHost = _public_data.public_data.socketHost;var _default =
           console.log("订单关闭成功", res);
         },
         fail: function fail(err) {
-          console.log("关闭失败", err);
+          console.log("订单关闭失败", err);
+          // uni.showToast({
+          // 	title: 'orderSocket not close' + err.errMsg,
+          // 	icon: 'none'
+          // })
         } });
 
     },
@@ -922,20 +889,20 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     } },
 
 
+  beforeDestroy: function beforeDestroy() {
+    this.closeSocket();
+    this.closeSocket_order();
+  },
   onHide: function onHide() {
     // tab页面使用onhide
-    console.log('hide111', this.timer);
-    if (String(this.timer).length > 0) {
-      clearInterval(this.timer);
-      this.timer = null;
-    }
-    console.log('hide222', this.timer);
-  },
-  onUnload: function onUnload() {
+
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
+    console.log(this.timer, 'hide');
+    this.closeSocket();
+    this.closeSocket_order();
   },
   onPullDownRefresh: function onPullDownRefresh() {
     this.loading = true;
@@ -950,6 +917,7 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     // 	}
     // })
     // this.getList(this.params)
+    console.log(this.city, '我刷新了');
     this.userinfo();
     setTimeout(function () {
       uni.stopPullDownRefresh();

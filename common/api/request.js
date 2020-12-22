@@ -48,11 +48,12 @@ function req(obj) {
 							uni.hideLoading()
 							uni.showModal({
 								title: res.data.msg,
-								showCancel: false,
+								cancelText:'稍后',
+								confirmText:'立即前往',
 								success: function(res) {
 									if (res.confirm) {
-										uni.switchTab({
-											url: '/pages/index/index'
+										uni.navigateTo({
+											url:'/pages/login/login'
 										})
 									}
 								}
@@ -64,15 +65,17 @@ function req(obj) {
 							uni.hideLoading()
 							uni.showModal({
 								title: res.data.msg,
-								showCancel: false,
+								cancelText:'稍后',
+								confirmText:'立即前往',
 								success: (res) => {
 									if (res.confirm) {
-										uni.removeStorageSync('LOGIN_DATA')
+										
 										uni.removeStorageSync('TOKEN')
 										uni.removeStorageSync('USERINFO')
-										uni.switchTab({
-											url: '/pages/index/index'
+										uni.navigateTo({
+											url:'/pages/login/login'
 										})
+										
 									}
 								}
 							})
@@ -83,14 +86,14 @@ function req(obj) {
 							uni.hideLoading()
 							uni.showModal({
 								title: res.data.msg,
-								showCancel: false,
+								cancelText:'稍后',
+								confirmText:'立即前往',
 								success: (res) => {
 									if (res.confirm) {
-										uni.removeStorageSync('LOGIN_DATA')
 										uni.removeStorageSync('TOKEN')
 										uni.removeStorageSync('USERINFO')
-										uni.switchTab({
-											url: '/pages/index/index'
+										uni.navigateTo({
+											url:'/pages/login/login'
 										})
 									}
 								}

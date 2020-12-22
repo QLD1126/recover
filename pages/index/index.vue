@@ -24,7 +24,7 @@
 				</view>
 			</view>
 		</view>
-		<me-empty v-if="noOrder" description="暂时没有订单"></me-empty>
+		<me-empty v-if="datalist.length==0" description="暂时没有订单"></me-empty>
 		<view v-else>
 			<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 				<view class="flex_between">
@@ -60,9 +60,9 @@
 					<view class="" v-if="item.images.length!==0">
 						图片：
 						<view class="images" @click='lookPic(item.images)'>
-						<!-- <image v-for="img in item.images" :src="img" mode=""></image> -->
-							
-						<image v-for="(img,index) in item.images" :key='index' :src="img" mode=""></image >
+							<!-- <image v-for="img in item.images" :src="img" mode=""></image> -->
+
+							<image v-for="(img,index) in item.images" :key='index' :src="img" mode=""></image>
 						</view>
 					</view>
 					<view class="" v-if="params.status==0">
@@ -84,7 +84,7 @@
 			<uni-load-more :status="loadState"></uni-load-more>
 		</view>
 		<!-- 弹出层 -->
-		<van-popup class='middle_prop' :show='show' closeable @close="onClose" round>
+		<van-popup class='middle_prop' :show='show' closeable @close="onClose" round duration='100'>
 			<!-- 余额不足 -->
 			<view class="middle_text" v-if="prop=='余额'">
 				<view class="prop_top">
@@ -155,7 +155,11 @@
 	export default {
 		data() {
 			return {
-				a:['http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284','http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284','http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284'],
+				a: [
+					'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284',
+					'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284',
+					'http://contentcms-bj.cdn.bcebos.com/cmspic/a244e1652074ab715258aa7232995fd2.jpeg?x-bce-process=image/crop,x_37,y_0,w_423,h_284'
+				],
 				// 弹出层
 				loginshow: false,
 				show: false,
@@ -182,7 +186,7 @@
 				loginData: uni.getStorageSync('LOGIN_DATA') || {},
 				userInfo: uni.getStorageSync('USERINFO') || {},
 				datalist: [],
-				city: '暂未开启定位',
+				city: uni.getStorageSync('LOCAL').city || '暂未开启定位',
 				titleArr: [{
 						title: '新订单',
 						type: 0
@@ -217,29 +221,51 @@
 			}
 		},
 		onLoad() {
-			// this.goLogin(this.loginData)
 			this.$apis.INDEX().then(res => {
 				this.routine_name = res.routine_name
 			})
 			this.getUserLocation()
-			// 记得解开注释
-			if (uni.getStorageSync('TOKEN').length > 0) {
-				this.goLogin(uni.getStorageSync('LOGIN_DATA'))
-			} else {
-				this.loginshow = true
+			// this.goLogin(this.loginData)
+			// console
+			if(uni.getStorageSync('TOKEN').length==''){
+				uni.showModal({
+					title: '是否立即登录？',
+					cancelText:'稍后',
+					confirmText:'立即前往',
+					success: function(res) {
+						if (res.confirm) {
+							uni.navigateTo({
+								url:'/pages/login/login'
+							})
+						}
+					}
+				})
 			}
 		},
 		onShow() {
-			this.loginshow = uni.getStorageSync('TOKEN').length > 0 ? false : true
+			// this.loginshow=!getApp().globalData.hasLogin
+			// console.log(getApp().globalData.hasLogin,11111)
+			// if(){
+				
 			// }
+			// 记得解开注释
+			// this.goLogin(uni.getStorageSync('LOGIN_DATA'))
+			this.getSetting_local().then(res => {
+				if (res) {
+					this.getUserLocation()
+				} else {
+					this.city = '暂未开启定位'
+					if (this.timer) {
+						clearInterval(this.timer)
+						this.timer = null
+					}
+				}
+			})
 		},
-		beforeDestroy() {
-			this.closeSocket();
-			this.closeSocket_order()
-		},
+
 		computed: {
 			noOrder() {
-				if (this.userInfo.on_line && this.datalist.length > 0) {
+				if ((this.userInfo.on_line!==0||!this.userInfo.on_line) && this.datalist.length > 0) {
 					return false
 
 				} else {
@@ -248,31 +274,34 @@
 			}
 		},
 		methods: {
-			audio(){
+			audio() {
 				const innerAudioContext = uni.createInnerAudioContext();
 				innerAudioContext.autoplay = true;
 				innerAudioContext.src = 'https://www.guanshange.com/static/file/dingdong.mp3';
 				innerAudioContext.onPlay(() => {
-				  console.log('开始播放');
+					console.log('开始播放');
 				});
 				innerAudioContext.onError((res) => {
-				  console.log(res.errMsg);
-				  console.log(res.errCode);
+					// console.log(res.errMsg);
+					// console.log(res.errCode);
 				});
 			},
-			lookPic(url){
+			lookPic(url) {
 				uni.previewImage({
-					urls:url,
-					complete(err){
+					urls: url,
+					complete(err) {
 						console.log(err)
 					}
 				})
 			},
 			getlocalset() {
+				console.log('打开定位')
 				this.getSetting_local().then(res => {
 					if (res) {
+						console.log('打开成功', res)
 						this.getUserLocation()
 					} else {
+						// console.log('打开失败', res)
 						this.show = true
 					}
 				})
@@ -299,14 +328,13 @@
 								// console.log('存在');
 								resolve(true);
 							} else {
-								// console.log('不存在');
+								// console.log('不存在1111');
 								resolve(false);
 							}
 						}
 					})
 				}).catch((e) => {
 
-					// console.log(1111,e)
 				});;
 			},
 			getSetting_info() {
@@ -324,17 +352,22 @@
 					})
 				}).catch((e) => {
 					console.log(e)
-				});;
+				});
 			},
 			getUserLocation() {
-
+				// console.log('获取定位1111')
 				// 地图
 				// var that = this;
 				qqmapsdk.reverseGeocoder({
 					success: (res) => {
 						let a = res.result
-						// console.log(location)
+						// console.log(a,'定位')
 						this.city = a.address_component.city
+						// console.log(999999,this.city)
+						let obj = { ...a.address_component,
+							...a.location
+						}
+						uni.setStorageSync('LOCAL', obj)
 						Object.assign(this.location, {
 							lat: a.location.lat,
 							lng: a.location.lng
@@ -356,7 +389,7 @@
 						latitude: item.user_latitude,
 						longitude: item.user_longitude
 					}]
-					console.log('距离计算',start,end)
+					console.log('距离计算', start, end)
 					qqmapsdk.calculateDistance({
 						from: start || '', //若起点有数据则采用起点坐标，若为空默认当前地址
 						to: end, //终点坐标
@@ -384,10 +417,7 @@
 						})
 						break;
 					case 'map':
-						// let key = 'XNJBZ-MEN64-OA7U7-DARCN-MKFNO-6RFFS';
-
 						// //使用在腾讯位置服务申请的key
-						// let referer = '旧衣服回收捐赠爱心哥'; //调用插件的app的名称
 						let endPoint = JSON.stringify({ //终点
 							'name': obj.user_address,
 							'latitude': obj.user_latitude,
@@ -445,6 +475,7 @@
 							this.userInfo.on_line = !this.userInfo.on_line
 							this.$apis.RECYCLE_LINE(this.userInfo.on_line ? 1 : 0).then(() => {
 								this.userinfo()
+								
 							})
 						}
 					}
@@ -483,6 +514,7 @@
 					page: 1,
 				})
 				if (type == 0 && !this.userInfo.on_line) {
+					this.datalist=[]
 					return
 				}
 				uni.showLoading({})
@@ -508,78 +540,6 @@
 			},
 			onClose() {
 				this.show = false
-			},
-			//微信授权登录
-			getUserInfo(e) {
-				var p = this.getSetting_info();
-				p.then((isAuth) => {
-					console.log('是否已经授权', isAuth);
-					if (isAuth) {
-						uni.showLoading({
-							title: '登录中...'
-						})
-						let res = e.detail
-						Object.assign(this.loginData, {
-							iv: res.iv,
-							encryptedData: res.encryptedData,
-							'catch_key': ''
-						})
-						this.goLogin(this.loginData)
-					} else {
-						// this.loginshow=true
-						uni.showToast({
-							title: '授权失败，请确认授权已开启',
-							mask: true,
-							icon: 'none'
-						})
-					}
-				});
-			},
-			goLogin(data) {
-				let p = this.getSetting_info()
-				p.then(res => {
-					if (res) {
-						uni.login({
-							provider: 'weixin',
-							success: (res) => {
-								Object.assign(data, {
-									jsCode: res.code,
-								})
-								this.$apis.LOGIN(data).then((res) => {
-									// console.log(res, '登录')
-									if (res.cache_key !== '') {
-										Object.assign(this.loginData, {
-											cache_key: res.cache_key
-										})
-									}
-									uni.setStorageSync('TOKEN', res.token)
-									uni.setStorageSync('LOGIN_DATA', this.loginData)
-									this.loginshow = false
-									// this.setLocation(this.localData)
-									this.userinfo()
-									getApp().globalData.hasLogin = true
-									uni.hideLoading()
-								}).catch((error) => {
-									uni.hideLoading()
-									this.loginshow = true
-									uni.showModal({
-										content: error.msg + ',点击重试',
-										showCancel: false,
-										success: (res) => {
-											if (res.confirm) {
-												this.goLogin()
-											}
-										}
-									})
-									// console.log(error, this.loginshow)
-								})
-							}
-						});
-					} else {
-						this.loginshow = true
-					}
-				})
-
 			},
 			userinfo() {
 				this.$apis.USERINFO().then(res => {
@@ -658,7 +618,7 @@
 					this.socketTask.send({
 						data: 'type=2&id=' + this.userInfo.id + '&latitude=' + this.location.lat + '&longitude=' + this.location.lng,
 						async success() {
-							// console.log("消息发送成功!");
+							console.log("消息发送成功!");
 						},
 					});
 					// 注：只有连接正常打开中 ，才能正常收到消息
@@ -666,7 +626,7 @@
 						if (res.data !== '') {
 							let obj = JSON.parse(res.data)
 						}
-						// console.log(res.data, '定位结果')
+						console.log(res.data, '定位结果')
 					});
 				})
 				// 这里仅是事件监听【如果socket关闭了会执行】
@@ -679,10 +639,14 @@
 				this.socketTask.close({
 					success(res) {
 						this.is_open_socket = false;
-						// console.log("定位关闭成功", res)
+						console.log("定位关闭成功", res)
 					},
 					fail(err) {
-						// console.log("定位关闭失败", err)
+						console.log("定位关闭失败", err)
+						// uni.showToast({
+						// 	title: 'localSocket not close' + err.errMsg,
+						// 	icon: 'none'
+						// })
 					}
 				})
 			},
@@ -692,7 +656,7 @@
 					this.socketTask.send({
 						data: 'type=2&id=' + this.userInfo.id + '&latitude=' + lat + '&longitude=' + lng,
 						async success() {
-							// console.log("定位消息发送成功");
+							console.log("定位消息发送成功");
 						},
 					});
 				}
@@ -739,7 +703,6 @@
 								}
 
 							})
-
 						}
 					});
 				})
@@ -756,7 +719,11 @@
 						console.log("订单关闭成功", res)
 					},
 					fail(err) {
-						console.log("关闭失败", err)
+						console.log("订单关闭失败", err)
+						// uni.showToast({
+						// 	title: 'orderSocket not close' + err.errMsg,
+						// 	icon: 'none'
+						// })
 					}
 				})
 			},
@@ -773,20 +740,20 @@
 			},
 
 		},
+		beforeDestroy() {
+			this.closeSocket();
+			this.closeSocket_order()
+		},
 		onHide() {
 			// tab页面使用onhide
-			console.log('hide111', this.timer)
-			if (String(this.timer).length > 0) {
-				clearInterval(this.timer)
-				this.timer = null
-			}
-			console.log('hide222', this.timer)
-		},
-		onUnload() {
+			
 			if (this.timer) {
 				clearInterval(this.timer)
 				this.timer = null
 			}
+			console.log(this.timer,'hide')
+			this.closeSocket();
+			this.closeSocket_order()
 		},
 		onPullDownRefresh() {
 			this.loading = true
@@ -801,6 +768,7 @@
 			// 	}
 			// })
 			// this.getList(this.params)
+			console.log(this.city, '我刷新了')
 			this.userinfo()
 			setTimeout(() => {
 				uni.stopPullDownRefresh();
@@ -817,14 +785,16 @@
 </script>
 
 <style lang="scss">
-	.images{
+	.images {
 		width: 90vw;
 		display: flex;
-		>image{
+
+		>image {
 			width: 220rpx;
 			height: 220rpx;
 		}
 	}
+
 	.container {
 		padding-top: 0;
 		height: 100%;

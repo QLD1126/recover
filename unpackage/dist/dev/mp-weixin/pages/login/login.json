@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "",
+  "enablePullDownRefresh": false,
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "van-nav-bar": "/wxcomponents/vant/dist/nav-bar/index"
+  }
+}

@@ -92,6 +92,19 @@
             }
             
         }
+        ,{
+            "path" : "pages/login/login",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom",
+				"usingComponents":{
+					"van-nav-bar": "/wxcomponents/vant/dist/nav-bar/index"
+				}
+            }
+            
+        }
     ],
 	"tabBar": {
 		"color": "#000",
