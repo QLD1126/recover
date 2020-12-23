@@ -4,7 +4,7 @@
 		<view class="model_jiedan" v-for="item in datalist" :key='item.id'>
 			<view class="flex_between">
 				<text>订单编号：{{item.order_id}}</text>
-				<text :style="(params.status==2||params.status==-1)?'color:#666':'color:#2E8EF4'">{{item.status==0?'新订单':item.status==1?'已接单':item.status==2?'已完成':'已取消'}}</text>
+				<text :style="(item.status==0||item.status==1)?'color:#666':'color:#2E8EF4'">{{item.status==0?'新订单':item.status==1?'已接单':item.status==2?'已完成':'已取消'}}</text>
 			</view>
 			<view class="">
 				<view class="">
@@ -17,7 +17,8 @@
 					类型：{{item.category}}
 				</view>
 				<view class="">
-					重量：{{item.weight}}kg
+					<!-- 重量：{{item.weight}}kg -->
+					重量：{{item.status==2?item.weight+'kg':item.weight_type}}
 				</view>
 				<view class="dizhi">
 					服务地址：

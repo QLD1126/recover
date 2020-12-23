@@ -392,13 +392,6 @@ var socketHost = _public_data.public_data.socketHost;var _default =
     }
   },
   onShow: function onShow() {var _this3 = this;
-    // this.loginshow=!getApp().globalData.hasLogin
-    // console.log(getApp().globalData.hasLogin,11111)
-    // if(){
-
-    // }
-    // 记得解开注释
-    // this.goLogin(uni.getStorageSync('LOGIN_DATA'))
     this.getSetting_local().then(function (res) {
       if (res) {
         _this3.getUserLocation();

@@ -42,7 +42,7 @@
 						类型：{{item.category}}
 					</view>
 					<view class="">
-						重量：{{item.weight}}kg
+						重量：{{params.status==2?item.weight+'kg':item.weight_type}}
 					</view>
 					<view class="dizhi" @click="toPage('map',item)">
 						服务地址：
@@ -243,13 +243,6 @@
 			}
 		},
 		onShow() {
-			// this.loginshow=!getApp().globalData.hasLogin
-			// console.log(getApp().globalData.hasLogin,11111)
-			// if(){
-				
-			// }
-			// 记得解开注释
-			// this.goLogin(uni.getStorageSync('LOGIN_DATA'))
 			this.getSetting_local().then(res => {
 				if (res) {
 					this.getUserLocation()
